@@ -10,5 +10,88 @@ generator client {
 
 datasource db {
   provider = "mongodb"
-  url = env("MONOGO_URI")
+  url      = env("MONOGO_URI")
+}
+
+// model User {
+//   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+//   email     String   @unique
+//   password  String
+//   name      String?
+//   phone     String?
+//   role      String   @default("PARENT")
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+// model Child {
+//   id           String   @id @default(auto()) @map("_id") @db.ObjectId
+//   name         String
+//   dateOfBirth  DateTime
+//   autism_level String
+//   createdAt    DateTime @default(now())
+//   updatedAt    DateTime @updatedAt
+// }
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  password  String
+  name      String?
+  phone     String?
+  role      String   @default("PARENT") // Possible values: PARENT, DOCTOR
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Parent    Parent?
+  Doctor    Doctor?
+}
+
+model Parent {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @unique @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  children  Child[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Child {
+  id              String           @id @default(auto()) @map("_id") @db.ObjectId
+  parentId        String           @db.ObjectId
+  parent          Parent           @relation(fields: [parentId], references: [id])
+  name            String
+  age             Int
+  autismLevel     String           @default("MILD") // Possible values: MILD, MODERATE, SEVERE
+  progressNotes   Json?
+  sessionHistory  Json?
+  therapySessions TherapySession[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model Doctor {
+  id               String           @id @default(auto()) @map("_id") @db.ObjectId
+  userId           String           @unique @db.ObjectId
+  user             User             @relation(fields: [userId], references: [id])
+  specialization   String
+  licenseNumber    String           @unique
+  practiceLocation String?
+  availableSlots   Json?
+  therapySessions  TherapySession[]
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
+model TherapySession {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  childId     String   @db.ObjectId
+  doctorId    String   @db.ObjectId
+  child       Child    @relation(fields: [childId], references: [id])
+  doctor      Doctor   @relation(fields: [doctorId], references: [id])
+  sessionDate DateTime
+  sessionType String   @default("ONLINE") // Possible values: ONLINE, IN_PERSON
+  status      String   @default("PENDING") // Possible values: PENDING, CONFIRMED, COMPLETED, CANCELED
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
