@@ -71,6 +71,7 @@ model TherapySession {
   sessionType String   @default("ONLINE") // Possible values: ONLINE, IN_PERSON
   status      String   @default("PENDING") // Possible values: PENDING, CONFIRMED, COMPLETED, CANCELED
   notes       String?
+  reminderUrl String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

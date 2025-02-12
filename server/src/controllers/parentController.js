@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const prisma = new PrismaClient();
 
+// Register a new parent or doctor user
 exports.register = async (req, res) => {
   const { email, password, name, contact, address, userType } = req.body;
 
@@ -44,6 +45,7 @@ exports.register = async (req, res) => {
   }
 };
 
+// Get details of a parent
 exports.getParentDetails = async (req, res) => {
   try {
     const parent = await prisma.parent.findUnique({
@@ -61,6 +63,7 @@ exports.getParentDetails = async (req, res) => {
   }
 };
 
+// Update a parent's information
 exports.updateParent = async (req, res) => {
   const { name, contact, address } = req.body;
 
@@ -84,6 +87,7 @@ exports.updateParent = async (req, res) => {
   }
 };
 
+// Delete a parent account
 exports.deleteParent = async (req, res) => {
   try {
     await prisma.parent.delete({
@@ -99,4 +103,3 @@ exports.deleteParent = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-xxxxx;
