@@ -39,12 +39,10 @@ export const signUp = async (req, res) => {
   }
 
   if (!username || username.length < 4 || !/^[a-zA-Z0-9_]+$/.test(username)) {
-    return res
-      .status(400)
-      .json({
-        message:
-          "Invalid username. Username must be at least 4 characters long and contain only alphanumeric characters and underscores.",
-      });
+    return res.status(400).json({
+      message:
+        "Invalid username. Username must be at least 4 characters long and contain only alphanumeric characters and underscores.",
+    });
   }
 
   try {
@@ -376,12 +374,10 @@ export const sendPasswordRecoveryEmail = async (req, res) => {
     }
 
     if (userDetails.loginType === "GOOGLE") {
-      return res
-        .status(400)
-        .json({
-          message:
-            "Cannot send password recovery email for Google sign-in users.",
-        });
+      return res.status(400).json({
+        message:
+          "Cannot send password recovery email for Google sign-in users.",
+      });
     }
 
     const result = await sendOTP(email, "recovery");
