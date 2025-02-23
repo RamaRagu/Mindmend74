@@ -42,7 +42,8 @@ export default function LoginScreen() {
   return (
     <View>
       <View>
-      <TouchableOpacity style={styles.button2}>
+      <TouchableOpacity style={styles.button2}
+      onPress={() => router.push('login/signin')}>
           <Text style={styles.buttonText2}>
             Skip
           </Text>

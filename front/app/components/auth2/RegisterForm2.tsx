@@ -4,7 +4,7 @@ import { InputField } from "./InputField";
 import { SocialButton } from "./SocialButton";
 import { useRouter } from 'expo-router';
 
-export const RegisterForm: React.FC = () => {
+export const RegisterForm2: React.FC = () => {
   const router = useRouter();
 
   const handleSubmit = () => {
@@ -13,16 +13,16 @@ export const RegisterForm: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => router.push('/login/onboard3')}>
+      <TouchableOpacity onPress={() => router.push('/login/signin')}>
         <Image
           source={require('../../../assets/images/back.png')}
           style={styles.backButton}
         />
       </TouchableOpacity>
-      <Text style={styles.title}>Register</Text>
+      <Text style={styles.title}>Welcome Back</Text>
       <View style={styles.imageContainer}>
         <Image
-          source={require('../../../assets/images/Register.png')}
+          source={require('../../../assets/images/welcome.png')}
           style={styles.image}
         />
       </View>
@@ -39,20 +39,15 @@ export const RegisterForm: React.FC = () => {
           type="password"
           showPasswordToggle
         />
-        <InputField
-          icon="https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/5dc575503113dbb7dabaca762e741ff786c988745ee10cca20d683cbb08b2c2a"
-          placeholder="Re-enter the password"
-          type="password"
-          showPasswordToggle
-        />
+        <Text style={styles.orText2}>Forgot password ?</Text>
       </View>
 
       <TouchableOpacity
         style={styles.signupButton}
-        onPress={handleSubmit}
+        onPress={() => router.push('/(tabs)')}
         activeOpacity={0.8}
       >
-        <Text style={styles.signupButtonText}>Sign up</Text>
+        <Text style={styles.signupButtonText}>Sign in</Text>
       </TouchableOpacity>
 
       <Text style={styles.orText}>or continue with</Text>
@@ -69,8 +64,8 @@ export const RegisterForm: React.FC = () => {
       </View>
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>Already you have an account? </Text>
-        <TouchableOpacity onPress={() => router.push('/login/signup')}>
+        <Text style={styles.footerText}>Don’t have an account ? </Text>
+        <TouchableOpacity onPress={() => router.push('/login/signin')}>
           <Text style={styles.signInText}>Sign up</Text>
         </TouchableOpacity>
       </View>
@@ -107,7 +102,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   image: {
-    width: 200,
+    width: 300,
     height: 200,
     borderRadius: 20,
   },
@@ -137,6 +132,13 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textAlign: "center",
     marginTop: 15,
+  },
+  orText2: {
+    fontSize: 16,
+    color: "#B50000",
+    fontWeight: "400",
+    textAlign: "center",
+    marginTop: 5,
   },
   socialButtons: {
     marginTop: 14,

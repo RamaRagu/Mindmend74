@@ -1,10 +1,10 @@
 import { SafeAreaView, StyleSheet } from "react-native";
-import { RegisterForm } from "../components/auth/RegisterForm"; 
+import { RegisterForm2 } from "../components/auth2/RegisterForm2";
 
-const signin = () => {
+const signup = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <RegisterForm />
+      <RegisterForm2 />
     </SafeAreaView>
   );
 };
@@ -16,4 +16,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default signin;
+export default signup;

@@ -6,7 +6,7 @@ export default function HomeScreen() {
   return (
     <View>
       <Text>HomeScreen</Text>
-      <Redirect href={'login'} />
+      
       
       
     </View>
