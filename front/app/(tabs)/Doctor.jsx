@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text, Image, ScrollView, StyleSheet } from "react-native";
-import { Header } from "../components/layout/Header";
 import { SearchBar } from "../components/doctor/SearchBar";
 import { DoctorCard } from "../components/doctor/DoctorCard";
+import { Header } from "../components/layout/Header";
 
 const Doctor = () => {
   return (
@@ -16,6 +16,13 @@ const Doctor = () => {
 
         <View style={styles.mainContent}>
           <Text style={styles.sectionTitle}>Services</Text>
+
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.boxContainer}>
+            <View style={styles.box}></View>
+            <View style={styles.box}></View>
+            <View style={styles.box}></View>
+            <View style={styles.box}></View>
+          </ScrollView>
 
           <Text style={[styles.sectionTitle, styles.doctorsTitle]}>
             Top Doctors
@@ -36,6 +43,8 @@ const Doctor = () => {
               image="https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/df337b2abae983c2b323db78d5f8a734a1ac676a68a6b9c2b1a9102fe5fa8b63"
               rating={4.5}
               time="10:30 AM-3:30"
+              role="Senior Surgeon"
+              fee="$12"
             />
 
             <DoctorCard
@@ -43,6 +52,8 @@ const Doctor = () => {
               image="https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/df337b2abae983c2b323db78d5f8a734a1ac676a68a6b9c2b1a9102fe5fa8b63"
               rating={4.5}
               time="10:30 AM-3:30"
+              role="Senior Surgeon"
+              fee="$12"
             />
 
             <DoctorCard
@@ -51,6 +62,15 @@ const Doctor = () => {
               rating={4.5}
               time="10:30 AM-3:30"
               expanded={true}
+            />
+          </View>
+
+          <View style={styles.dotsContainer}>
+            <Image
+              source={{
+                uri: "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/7ed50aecc25d8b11f755355242db516820c31225360e181b60ad8906bfb6987c",
+              }}
+              style={styles.dots}
             />
           </View>
         </View>
@@ -83,10 +103,22 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginLeft: 21,
   },
+  boxContainer: {
+    flexDirection: "row",
+    marginTop: 20,
+    marginHorizontal: 0,
+  },
+  box: {
+    width: 100,
+    height: 100,
+    backgroundColor: "#042558",
+    borderRadius: 10,
+    marginRight: 10,
+  },
   doctorsTitle: {
     color: "#1E1F2E",
     marginLeft: 15,
-    marginTop: 143,
+    marginTop: 20,
   },
   doctorsList: {
     gap: 16,
@@ -94,7 +126,7 @@ const styles = StyleSheet.create({
   },
   dotsContainer: {
     alignItems: "center",
-    marginTop: 20,
+    marginTop: 10,
   },
   dots: {
     width: 9,

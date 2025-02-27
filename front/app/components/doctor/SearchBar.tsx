@@ -1,13 +1,14 @@
 import React from "react";
 import { View, TextInput, Image, StyleSheet } from "react-native";
 
+// Import the local image
+import searchIcon from "../../../assets/images/search.svg";
+
 export const SearchBar: React.FC = () => {
   return (
     <View style={styles.container}>
       <Image
-        source={{
-          uri: "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/9350dca220bb797d3af926bf254222ca6b84c74a9e4eb7e6258a59c945e75430",
-        }}
+        source={searchIcon}
         style={styles.searchIcon}
       />
       <TextInput
@@ -25,15 +26,15 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: {
       width: 7,
-      height: 6,
+      height: 5,
     },
     shadowOpacity: 0.25,
     shadowRadius: 20,
     elevation: 5,
     flexDirection: "row",
     alignItems: "center",
-    gap: 23,
-    padding: 19,
+    gap: 20,
+    padding: 10,
     borderRadius: 10,
   },
   searchIcon: {

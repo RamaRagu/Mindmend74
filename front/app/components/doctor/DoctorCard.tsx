@@ -32,56 +32,7 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
           <Image source={{ uri: image }} style={styles.doctorImage} />
           <Text style={styles.doctorNameExpanded}>{name}</Text>
         </View>
-        <View style={styles.bottomSection}>
-          <View style={styles.iconContainer}>
-            <Image
-              source={{
-                uri: "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/bc9257f96da52e62d68f610dd482208030f8b8f66ae7941079799592128430b6",
-              }}
-              style={styles.backgroundIcon}
-            />
-            <Image
-              source={{
-                uri: "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/4d02e8fae834b0d9708455f700eb008018407a99de947994ec86ccb6879ff5f2",
-              }}
-              style={styles.foregroundIcon}
-            />
-          </View>
-          <View style={styles.actionSection}>
-            <View style={styles.timeSection}>
-              <Image
-                source={{
-                  uri: "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/99d2d1c2e90b64a22cdeb1cf6d89aa42e609939c62ad6fb348069e75c7763af8",
-                }}
-                style={styles.timeIcon}
-              />
-              
-            </View>
-            <View style={styles.actionIcons}>
-              <Image
-                source={{
-                  uri: "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/81e1111fd3c8076cf2806d1fb2cade23908bc1882bfa8811487ebd27d151a879",
-                }}
-                style={styles.actionIcon}
-              />
-              <Image
-                source={{
-                  uri: "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/30fecfa5faa80544e5c97059b3ed85b7904819e97a349ab614979246861c3cd0",
-                }}
-                style={styles.smallActionIcon}
-              />
-            </View>
-            <View style={styles.doctorLabel}>
-              <Image
-                source={{
-                  uri: "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/5ff99b95932aa0260920568a1bc08762b65ee18ad2289a47e20a2668a40fe050",
-                }}
-                style={styles.doctorIcon}
-              />
-              <Text style={styles.doctorText}>Doctor</Text>
-            </View>
-          </View>
-        </View>
+        
       </View>
     );
   }
@@ -206,7 +157,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 42,
     paddingBottom: 16,
-    marginTop: 8,
+    marginTop: 10,
   },
   iconContainer: {
     width: 30,
