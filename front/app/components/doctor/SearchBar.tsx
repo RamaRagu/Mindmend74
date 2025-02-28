@@ -2,13 +2,13 @@ import React from "react";
 import { View, TextInput, Image, StyleSheet } from "react-native";
 
 // Import the local image
-import searchIcon from "../../../assets/images/search.svg";
+//import searchIcon from "../../../assets/images/search.png";
 
 export const SearchBar: React.FC = () => {
   return (
     <View style={styles.container}>
       <Image
-        source={searchIcon}
+        //source={searchIcon}
         style={styles.searchIcon}
       />
       <TextInput

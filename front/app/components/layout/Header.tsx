@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 
 // Import the local image using a relative path
-import profileImage from "../../../assets/images/ak.jpg";
+//import profileImage from "../../../assets/images/ak.jpg";
 
 export const Header: React.FC = () => {
   return (
@@ -11,7 +11,7 @@ export const Header: React.FC = () => {
       <View style={styles.profile}>
         <TouchableOpacity style={styles.profileImageContainer}>
           <Image
-            source={profileImage}
+            //source={profileImage}
             style={styles.profileImage}
           />
         </TouchableOpacity>
