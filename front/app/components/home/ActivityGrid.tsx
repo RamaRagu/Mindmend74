@@ -9,7 +9,7 @@ export const ActivityGrid: React.FC = () => {
     <View style={styles.container}>
       <TouchableOpacity 
         style={styles.button}
-        onPress={() => router.push('chatbot/chatg')} // Correct the navigation path
+        onPress={() => router.push('/chatbot/chatg')} // Correct the navigation path
       >
         <Image 
           source={require('../../../assets/images/spt.png')} 
@@ -19,7 +19,7 @@ export const ActivityGrid: React.FC = () => {
       </TouchableOpacity>
       <TouchableOpacity 
         style={styles.button}
-        onPress={() => router.push('chatbot/chatg')} // Correct the navigation path
+        onPress={() => router.push('/chatbot/chatg')} // Correct the navigation path
       >
         <Image 
           source={require('../../../assets/images/games.png')} 
