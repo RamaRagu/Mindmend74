@@ -1,15 +1,30 @@
 import React from "react";
 import { View, TouchableOpacity, Text, StyleSheet, Image } from "react-native";
+import { useRouter } from 'expo-router'; // Import useRouter hook
 
 export const ActivityGrid: React.FC = () => {
+  const router = useRouter(); // Initialize router
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.button}>
-        <Image source={require('../../../assets/images/spt.png')} style={{ width: 100, height: 100,justifyContent:"center",left:10  }} />
+      <TouchableOpacity 
+        style={styles.button}
+        onPress={() => router.push('chatbot/chatg')} // Correct the navigation path
+      >
+        <Image 
+          source={require('../../../assets/images/spt.png')} 
+          style={{ width: 100, height: 100, justifyContent: "center", left: 10 }} 
+        />
         <Text style={styles.buttonText}>Speech Therapy</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button}>
-      <Image source={require('../../../assets/images/games.png')} style={{ width: 120, height: 100,justifyContent:"center",left:10  }} />
+      <TouchableOpacity 
+        style={styles.button}
+        onPress={() => router.push('chatbot/chatg')} // Correct the navigation path
+      >
+        <Image 
+          source={require('../../../assets/images/games.png')} 
+          style={{ width: 120, height: 100, justifyContent: "center", left: 10 }} 
+        />
         <Text style={styles.buttonText}>Games</Text>
       </TouchableOpacity>
     </View>
@@ -34,8 +49,8 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "500",
-    justifyContent:"center",
-    textAlign:"center",
-    marginTop:10
+    justifyContent: "center",
+    textAlign: "center",
+    marginTop: 10,
   },
 });

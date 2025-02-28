@@ -1,5 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
+import { useRouter } from 'expo-router'; // Import useRouter hook
 import { Header } from "../components/home/Header";
 import { ActionCard } from "../components/home/ActionCard";
 import { ActivityGrid } from "../components/home/ActivityGrid";
@@ -8,7 +9,9 @@ import { ActivityGrid } from "../components/home/ActivityGrid";
 import formImage from "../../assets/images/form.png";
 import chatImage from "../../assets/images/chatb.png"; // Import the new image
 
-const index = () => {
+const Index = () => {
+  const router = useRouter(); // Initialize router
+
   return (
     <View style={styles.container}>
       <Header style={styles.header} />
@@ -16,23 +19,24 @@ const index = () => {
       <View style={styles.content}>
         <View style={styles.actionSection}>
           <ActionCard
-            title=" Fill the 
+            onPress={() => router.push('chatbot/chatg')} // Correct the navigation path
+            title="Fill the 
             Form to 
             identify 
             the level"
             imageSource={formImage}
             style={styles.formCard}
-            imageStyle={styles.formImage} 
-            titleStyle={styles.formCardTitle} 
+            imageStyle={styles.formImage}
+            titleStyle={styles.formCardTitle}
           />
-          <ActionCard 
-             
-            imageSource={chatImage} 
-            title="Chat with
+          <ActionCard
+            onPress={() => router.push('chatbot/chatg')} // Correct the navigation path
+            title="Chat With
              me!"
-            style={styles.chatCard} 
+            imageSource={chatImage}
+            style={styles.chatCard}
             imageStyle={styles.chatImage}
-            titleStyle={styles.chatCardTitle} 
+            titleStyle={styles.chatCardTitle}
           />
         </View>
 
@@ -86,13 +90,12 @@ const styles = StyleSheet.create({
   formImage: {
     width: 200,
     height: 200,
-    marginLeft: -70, 
+    marginLeft: -70,
   },
   formCardTitle: {
     fontSize: 30,
     color: "#042558",
     marginLeft: -10,
-    
   },
   chatCard: {
     paddingHorizontal: 56,
@@ -101,12 +104,12 @@ const styles = StyleSheet.create({
   chatImage: {
     width: 150,
     height: 150,
-    marginleft: 100,
+    marginLeft: 100,
   },
   chatCardTitle: {
     fontSize: 30,
     color: "#042558",
-    marginLeft: -330,
+    marginLeft: -310,
   },
   activitySection: {
     marginTop: 15,
@@ -117,4 +120,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default index;
+export default Index;
