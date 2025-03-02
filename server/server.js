@@ -37,10 +37,10 @@ app.get("/headers", (request, response) => response.send(request.headers));
 
 // Use the parent and child routes
 app.use("/api/auth", userAuthRoutes);
-app.use("/api/parents", parentRoutes);
-app.use("/api/children", childRoutes);
-app.use("/api/doctors", doctorRoutes);
-app.use("/api/therapy-sessions", therapySessionRoutes);
+app.use("/api/parent", parentRoutes);
+app.use("/api/child", childRoutes);
+app.use("/api/doctor", doctorRoutes);
+app.use("/api/therapy-session", therapySessionRoutes);
 
 // Start the server
 app.listen(port, () => {
