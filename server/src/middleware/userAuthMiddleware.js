@@ -1,9 +1,9 @@
-import jwt from "jsonwebtoken";
-import { PrismaClient } from "@prisma/client";
+const jwt = require("jsonwebtoken");
+const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
-export const authMiddleware = (roles) => {
+const authMiddleware = (roles) => {
   return async (req, res, next) => {
     const token = req.cookies.accessToken;
 
@@ -37,3 +37,5 @@ export const authMiddleware = (roles) => {
     }
   };
 };
+
+module.exports = authMiddleware;
