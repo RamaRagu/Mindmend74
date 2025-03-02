@@ -1,7 +1,6 @@
 const { supabase } = require("../utils/supabaseClient.js");
 const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcrypt");
-const { verifyFirebaseToken } = require("../utils/firebaseAdmin");
 
 const prisma = new PrismaClient();
 
@@ -21,20 +20,18 @@ const signUp = async (req, res) => {
     role,
     phone,
     fullName,
-    medicalLicenseNumber,
+    licenseNumber,
     specialization,
     yearsOfExperience,
     children,
+    availability,
   } = req.body;
 
   if (!email || !password) {
-    return res
-      .status(400)
-      .json({ message: "Email or password are required." });
+    return res.status(400).json({ message: "Email or password are required." });
   }
 
   try {
-
     if (!email || !password) {
       return res
         .status(400)
@@ -48,6 +45,10 @@ const signUp = async (req, res) => {
       },
     });
 
+    if (!role) {
+      return res.status(400).json({ message: "Role is required." });
+    }
+
     if (userExists) {
       return res.status(400).json({ message: "User already exists." });
     }
@@ -58,26 +59,45 @@ const signUp = async (req, res) => {
     let hashedPassword;
     hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await prisma.user.create({
-      data: {
-        email: email,
-        password: hashedPassword,
-        role: role || "PARENT",
-        name: fullName,
-        phone: phone,
-      },
-    });
-
-    if (role === "PARENT") {
-      await prisma.parent.create({
+    // Use Prisma transaction to ensure atomicity
+    const newUser = await prisma.$transaction(async (tx) => {
+      // Create the base user
+      const user = await tx.user.create({
         data: {
-          userId: newUser.id,
-          children: {
-            create: children,
-          },
+          email: email,
+          password: hashedPassword,
+          role: role || "PARENT",
+          name: fullName,
+          phone: phone,
         },
       });
-    }
+
+      // Based on role, create the appropriate related record
+      if (role === "PARENT") {
+        await tx.parent.create({
+          data: {
+            userId: user.id,
+            children: {
+              create: children,
+            },
+          },
+        });
+      }
+
+      if (role === "DOCTOR") {
+        await tx.doctor.create({
+          data: {
+            userId: user.id,
+            licenseNumber: licenseNumber,
+            specialization: specialization,
+            yearsOfExperience: yearsOfExperience,
+            availableSlots: availability,
+          },
+        });
+      }
+
+      return user;
+    });
 
     res.status(201).json({
       message: "User signed up successfully",
@@ -96,14 +116,10 @@ const signIn = async (req, res) => {
   let { email, password, firebaseToken } = req.body;
 
   if (!email || !password) {
-    return res
-      .status(400)
-      .json({ message: "Email or password are required." });
+    return res.status(400).json({ message: "Email or password are required." });
   }
 
   try {
-
-
     const userDetails = await prisma.user.findUnique({
       where: {
         email: email,
@@ -135,7 +151,6 @@ const signIn = async (req, res) => {
  */
 const signOut = async (req, res) => {
   try {
-
     res.status(200).json({ message: "User signed out successfully." });
   } catch (error) {
     console.error("Error signing out user:", error);
