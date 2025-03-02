@@ -3,17 +3,21 @@ const prisma = new PrismaClient();
 
 // Create a new child account linked to a parent
 exports.createChild = async (req, res) => {
-  const { name, age, autismLevel, progressNotes, sessionHistory } = req.body;
+  const { userId, name, age, autismLevel, progressNotes, sessionHistory } = req.body;
 
   try {
+    const parent = await prisma.parent.findUnique({
+      where: { userId },
+    });
+
     const child = await prisma.child.create({
       data: {
-        parentId: req.user.parent.id,
+        parentId: parent.id,
         name,
-        age,
-        autismLevel,
-        progressNotes,
-        sessionHistory,
+        age: parseInt(age),
+        autismLevel: autismLevel || "Not diagnosed",
+        progressNotes: progressNotes || "",
+        sessionHistory: sessionHistory || [],
       },
     });
     res.status(201).json(child);
