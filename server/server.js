@@ -7,6 +7,7 @@ const parentRoutes = require("./src/routes/parentRoutes.js");
 const childRoutes = require("./src/routes/childRoutes.js");
 const doctorRoutes = require("./src/routes/doctorRoutes.js");
 const therapySessionRoutes = require("./src/routes/therapySessionRoutes.js");
+const userAuthRoutes = require("./src/routes/userAuthRoutes.js");
 
 const app = express();
 const port = 3000;
@@ -35,6 +36,7 @@ app.get("/ip", (request, response) => response.send(request.ip));
 app.get("/headers", (request, response) => response.send(request.headers));
 
 // Use the parent and child routes
+app.use("/api/auth", userAuthRoutes);
 app.use("/api/parents", parentRoutes);
 app.use("/api/children", childRoutes);
 app.use("/api/doctors", doctorRoutes);
