@@ -1,10 +1,7 @@
-import { supabase } from "../utils/supabaseClient.js";
-import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
-import { verifyFirebaseToken } from "../utils/firebaseAdmin.js";
-import { sendOTP, validateOTP, clearOTP } from "../utils/otpUtils.js";
-import crypto from "crypto";
-import e from "express";
+const { supabase } = require("../utils/supabaseClient.js");
+const { PrismaClient } = require("@prisma/client");
+const bcrypt = require("bcrypt");
+const { verifyFirebaseToken } = require("../utils/firebaseAdmin");
 
 const prisma = new PrismaClient();
 
@@ -17,13 +14,11 @@ const validatePassword = (password) => {
 /**
  * Sign up a new user
  */
-export const signUp = async (req, res) => {
+const signUp = async (req, res) => {
   let {
-    username,
     email,
     password,
     role,
-    firebaseToken,
     phone,
     fullName,
     medicalLicenseNumber,
@@ -32,56 +27,18 @@ export const signUp = async (req, res) => {
     children,
   } = req.body;
 
-  if ((!email || !password) && !firebaseToken) {
+  if (!email || !password) {
     return res
       .status(400)
-      .json({ message: "Email and password or Firebase token are required." });
-  }
-
-  if (!username || username.length < 4 || !/^[a-zA-Z0-9_]+$/.test(username)) {
-    return res.status(400).json({
-      message:
-        "Invalid username. Username must be at least 4 characters long and contain only alphanumeric characters and underscores.",
-    });
+      .json({ message: "Email or password are required." });
   }
 
   try {
-    if (firebaseToken) {
-      const decodedToken = await verifyFirebaseToken(firebaseToken);
-      const { uid, email: firebaseEmail, name } = decodedToken;
-
-      if (!firebaseEmail) {
-        return res
-          .status(400)
-          .json({ message: "Invalid Firebase token: email not found." });
-      }
-
-      // Check if the user already exists in the database
-      const findUser = await prisma.user.findUnique({
-        where: {
-          email: firebaseEmail,
-        },
-      });
-
-      if (findUser) {
-        return res.status(400).json({ message: "User already exists." });
-      }
-
-      password = uid;
-      fullName = name;
-      email = firebaseEmail;
-    }
 
     if (!email || !password) {
       return res
         .status(400)
         .json({ message: "Email and password are required for sign-up." });
-    }
-
-    if (!validatePassword(password)) {
-      return res
-        .status(400)
-        .json({ message: "Password does not meet the validation criteria." });
     }
 
     // Check if user already exists in database
@@ -99,31 +56,15 @@ export const signUp = async (req, res) => {
 
     // Hash the password
     let hashedPassword;
-    if (!firebaseToken) {
-      hashedPassword = await bcrypt.hash(password, 10);
-    } else {
-      hashedPassword = password;
-      loginType = "GOOGLE";
-    }
-
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-
-    if (error) {
-      return res.status(400).json({ message: error.message });
-    }
+    hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await prisma.user.create({
       data: {
-        id: data.user.id,
         email: email,
         password: hashedPassword,
         role: role || "PARENT",
         name: fullName,
         phone: phone,
-        loginType: loginType,
       },
     });
 
@@ -138,20 +79,8 @@ export const signUp = async (req, res) => {
       });
     }
 
-    if (role === "DOCTOR") {
-      await prisma.doctor.create({
-        data: {
-          userId: newUser.id,
-          specialization: specialization,
-          licenseNumber: medicalLicenseNumber,
-          yearsOfExperience: yearsOfExperience,
-        },
-      });
-    }
-
     res.status(201).json({
       message: "User signed up successfully",
-      supabaseUser: data,
       prismaUser: newUser,
     });
   } catch (error) {
@@ -163,50 +92,17 @@ export const signUp = async (req, res) => {
 /**
  * Sign in a user
  */
-export const signIn = async (req, res) => {
+const signIn = async (req, res) => {
   let { email, password, firebaseToken } = req.body;
 
-  if ((!email || !password) && !firebaseToken) {
+  if (!email || !password) {
     return res
       .status(400)
-      .json({ message: "Email and password or Firebase token are required." });
+      .json({ message: "Email or password are required." });
   }
 
   try {
-    if (firebaseToken) {
-      const decodedToken = await verifyFirebaseToken(firebaseToken);
-      const { uid, email: firebaseEmail } = decodedToken;
 
-      if (!firebaseEmail) {
-        return res
-          .status(400)
-          .json({ message: "Invalid Firebase token: email not found." });
-      }
-
-      email = firebaseEmail;
-      password = uid;
-
-      // Check if the user already exists in the database
-      const findUser = await prisma.user.findUnique({
-        where: {
-          email: email,
-        },
-      });
-
-      // If the user does not exist, redirect to sign-up
-      if (!findUser) {
-        return signUp(req, res);
-      }
-    }
-
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      return res.status(400).json({ message: error.message });
-    }
 
     const userDetails = await prisma.user.findUnique({
       where: {
@@ -219,18 +115,6 @@ export const signIn = async (req, res) => {
         .status(404)
         .json({ message: "User details not found in the database." });
     }
-
-    // Set the access token and refresh token as cookies
-    res.cookie("accessToken", data.session.access_token, {
-      httpOnly: true,
-      sameSite: "none",
-      secure: true,
-    });
-    res.cookie("refreshToken", data.session.refresh_token, {
-      httpOnly: true,
-      sameSite: "none",
-      secure: true,
-    });
 
     res.status(200).json({
       message: "User signed in successfully.",
@@ -249,17 +133,8 @@ export const signIn = async (req, res) => {
 /**
  * Sign out a user
  */
-export const signOut = async (req, res) => {
+const signOut = async (req, res) => {
   try {
-    const { error } = await supabase.auth.signOut();
-
-    if (error) {
-      return res.status(400).json({ message: error.message });
-    }
-
-    // Clear the access token and refresh token cookies
-    res.clearCookie("accessToken");
-    res.clearCookie("refreshToken");
 
     res.status(200).json({ message: "User signed out successfully." });
   } catch (error) {
@@ -271,7 +146,7 @@ export const signOut = async (req, res) => {
 /**
  * Update password
  */
-export const updatePassword = async (req, res) => {
+const updatePassword = async (req, res) => {
   const { currentPassword, newPassword } = req.body;
   const { user } = req;
 
@@ -355,7 +230,7 @@ export const updatePassword = async (req, res) => {
 /**
  * Password Recovery email
  */
-export const sendPasswordRecoveryEmail = async (req, res) => {
+const sendPasswordRecoveryEmail = async (req, res) => {
   const { email } = req.params;
 
   if (!email) {
@@ -396,7 +271,7 @@ export const sendPasswordRecoveryEmail = async (req, res) => {
 /**
  * Validate OTP
  */
-export const validatePasswordRecoveryOTP = async (req, res) => {
+const validatePasswordRecoveryOTP = async (req, res) => {
   const { otp } = req.body;
 
   if (!otp) {
@@ -420,7 +295,7 @@ export const validatePasswordRecoveryOTP = async (req, res) => {
 /**
  * Handle password recovery
  */
-export const handlePasswordRecovery = async (req, res) => {
+const handlePasswordRecovery = async (req, res) => {
   const { otp, newPassword } = req.body;
 
   if (!otp || !newPassword) {
@@ -487,7 +362,7 @@ export const handlePasswordRecovery = async (req, res) => {
 /**
  * Forward request to Supabase
  */
-export const forwardRequestToSupabase = async (req, res) => {
+const forwardRequestToSupabase = async (req, res) => {
   const { token, type, redirect_to } = req.query;
 
   if (!token || !type || !redirect_to) {
@@ -515,4 +390,15 @@ export const forwardRequestToSupabase = async (req, res) => {
     console.error("Error forwarding request to Supabase:", error);
     return res.status(500).json({ message: "Internal server error." });
   }
+};
+
+module.exports = {
+  signUp,
+  signIn,
+  signOut,
+  updatePassword,
+  forwardRequestToSupabase,
+  sendPasswordRecoveryEmail,
+  handlePasswordRecovery,
+  validatePasswordRecoveryOTP,
 };

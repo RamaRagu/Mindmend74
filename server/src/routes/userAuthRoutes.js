@@ -1,5 +1,5 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   signUp,
   signIn,
   signOut,
@@ -8,15 +8,9 @@ import {
   sendPasswordRecoveryEmail,
   handlePasswordRecovery,
   validatePasswordRecoveryOTP,
-} from "../controllers/authController.js";
-import { authMiddleware } from "../middleware/authMiddleware.js";
+} = require("../controllers/userAuthController");
 
 const router = express.Router();
-
-// Route to verify
-router.get("/verify-user", authMiddleware("USER"), (req, res) => {
-  res.status(200).json({ message: "User is authenticated.", user: req.user });
-});
 
 // Route to Sign Up
 router.post("/signup", signUp);
@@ -28,7 +22,7 @@ router.post("/signin", signIn);
 router.post("/google-signin", signIn);
 
 // Route to Sign Out
-router.post("/signout", authMiddleware(["PARENT", "DOCTOR"]), signOut);
+router.post("/signout", signOut);
 
 // Route to send recovery password email
 router.get("/send-password-recovery-email/:email", sendPasswordRecoveryEmail);
@@ -40,7 +34,7 @@ router.post("/validate-otp", validatePasswordRecoveryOTP);
 router.post("/handle-password-recovery", handlePasswordRecovery);
 
 // Route to update Password
-router.put("/update-password", authMiddleware("USER"), updatePassword);
+router.put("/update-password", updatePassword);
 
 // Route to forward supabase requests
 router.get("/verify", (req, res, next) => {
@@ -48,4 +42,4 @@ router.get("/verify", (req, res, next) => {
   forwardRequestToSupabase(req, res, next);
 });
 
-export default router;
+module.exports = router;
