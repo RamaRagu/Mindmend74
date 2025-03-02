@@ -1,17 +1,26 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-// Get details of a doctor
+// Get all doctors
+exports.getAllDoctors = async (req, res) => {
+  try {
+    const doctors = await prisma.doctor.findMany({
+      include: { user: true },
+    });
+
+    res.status(200).json(doctors);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Get a specific doctor's information
 exports.getDoctorDetails = async (req, res) => {
   try {
     const doctor = await prisma.doctor.findUnique({
       where: { userId: req.user.id },
-      include: { user: true, sessions: true },
+      include: { user: true },
     });
-
-    if (!doctor) {
-      return res.status(404).json({ error: "Doctor not found" });
-    }
 
     res.status(200).json(doctor);
   } catch (error) {
@@ -58,4 +67,48 @@ exports.deleteDoctor = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+};
+
+// Add availability for a doctor
+exports.addAvailability = async (req, res) => {
+  const { date, slots } = req.body;
+  const doctorId = req.params.id;
+
+  const doctor = await prisma.doctor.findUnique({
+    where: { id: doctorId },
+  });
+
+  let availableSlots = doctor.availableSlots || [];
+
+  // Check if date already exists
+  const dateEntry = availableSlots.find((d) => d.date === date);
+
+  if (dateEntry) {
+    dateEntry.slots = Array.from(new Set([...dateEntry.slots, ...slots]));
+  } else {
+    availableSlots.push({ date, slots });
+  }
+
+  await prisma.doctor.update({
+    where: { id: doctorId },
+    data: { availableSlots },
+  });
+
+  res.json({ message: "Availability updated", availableSlots });
+};
+
+// Get availability for a doctor
+exports.getAvailability = async (req, res) => {
+  const { date } = req.query;
+  const doctorId = req.params.id;
+
+  const doctor = await prisma.doctor.findUnique({
+    where: { id: doctorId },
+  });
+
+  const availableSlots = doctor?.availableSlots || [];
+
+  const slotsForDate = availableSlots.find((d) => d.date === date);
+
+  res.json({ slots: slotsForDate ? slotsForDate.slots : [] });
 };
