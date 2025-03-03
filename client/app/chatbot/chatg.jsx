@@ -1,16 +1,42 @@
 import React, { useState } from "react";
 import { View, Text, Image, ScrollView, StyleSheet, SafeAreaView } from "react-native";
+import axios from "axios";
 
 import { ChatHeader } from "../components/chat/ChatHeader";
 import { ChatInput } from "../components/chat/ChatInput";
 import { ChatSuggestion } from "../components/chat/ChatSuggestion";
 
-
 const chatg = () => {
   const [messages, setMessages] = useState([]);
 
-  const handleSendMessage = (message) => {
-    setMessages([...messages, message]);
+  const handleSendMessage = async (message) => {
+    setMessages([...messages, { text: message, sender: "user" }]);
+
+    try {
+      const response = await axios.post("https://api.openai.com/v1/chat/completions", {
+        model: "gpt-3.5-turbo",
+        messages: [
+            {
+                "role": "system",
+                "content": "You are a helpful assistant. This is a Chatbot for Autism so you can ask anything related to Autism."
+            },
+            {
+                "role": "user",
+                "content": message
+            }
+        ]
+      }, {
+        headers: {
+          "Authorization": `Bearer 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`,
+          "Content-Type": "application/json"
+        }
+      });
+
+      const reply = response.data.choices[0].message.content;
+      setMessages((prevMessages) => [...prevMessages, { text: reply, sender: "bot" }]);
+    } catch (error) {
+      console.error("Error sending message to OpenAI:", error);
+    }
   };
 
   const suggestions = [

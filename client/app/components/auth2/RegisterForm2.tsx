@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { InputField } from "./InputField";
 import { SocialButton } from "./SocialButton";
 import { useRouter } from 'expo-router';
+import { RegisterForm } from "../auth2/RegisterForm3";
 
 export const RegisterForm2: React.FC = () => {
   const router = useRouter();
@@ -39,7 +40,9 @@ export const RegisterForm2: React.FC = () => {
           type="password"
           showPasswordToggle
         />
-        <Text style={styles.orText2}>Forgot password ?</Text>
+        <TouchableOpacity onPress={() => router.push('../auth2/RegisterForm3')}>
+          <Text style={styles.orText2}>Forgot password ?</Text>
+        </TouchableOpacity>
       </View>
 
       <TouchableOpacity
@@ -65,7 +68,7 @@ export const RegisterForm2: React.FC = () => {
 
       <View style={styles.footer}>
         <Text style={styles.footerText}>Don’t have an account ? </Text>
-        <TouchableOpacity onPress={() => router.push('/login/signin')}>
+        <TouchableOpacity onPress={() => router.push('/login/signup')}>
           <Text style={styles.signInText}>Sign up</Text>
         </TouchableOpacity>
       </View>
