@@ -27,11 +27,7 @@ const Layout = () => {
         screenOptions={{
           headerShown: false,
         }}
-      >
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="login" />
-        <Stack.Screen name="survey" />
-      </Stack>
+      />
     </View>
   );
 };

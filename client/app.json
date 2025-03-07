@@ -25,7 +25,8 @@
         "image": "./assets/images/finalLogo.png",
         "resizeMode": "contain",
         "backgroundColor": "#042558"
-      }
+      },
+      "package": "com.anonymous.front"
     },
     "web": {
       "bundler": "metro",
