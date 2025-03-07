@@ -10,6 +10,10 @@ CORS(app)  # Allow requests from other domains (React Native frontend)
 # Load the trained model
 model = joblib.load("Level_Detaction_model.joblib")
 
+@app.route('/')
+def home():
+    return 'Model API'
+
 # Define the API route for prediction
 @app.route('/predict', methods=['POST'])
 def predict():
