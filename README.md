@@ -131,6 +131,6 @@ This command will move the starter code to the **app-example** directory and cre
 
 ## Contact
 
-For any questions or inquiries, please contact us at [email@example.com](mailto:email@example.com).
+For any questions or inquiries, please contact us at [mindmend@gmail.com](mailto:mindmend@gmail.com).
 
 Thank you for visiting Mindmend74! We hope our project helps you in your journey towards better mental health.
