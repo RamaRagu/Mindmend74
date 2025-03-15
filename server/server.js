@@ -11,7 +11,7 @@ const doctorRoutes = require("./src/routes/doctorRoutes.js");
 const therapySessionRoutes = require("./src/routes/therapySessionRoutes.js");
 const userAuthRoutes = require("./src/routes/userAuthRoutes.js");
 const predictionRoutes = require("./src/routes/prediction");
-
+const speechRoutes = require("./src/routes/speechRoutes.js");
 
 const app = express();
 const port = 3000;
@@ -30,6 +30,9 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/predict", predictionRoutes);  // Use prediction route
+
+app.use('/api/speech', speechRoutes);
+
 
 app.get("/test", (req, res) => {
   console.log("Test route hit");
