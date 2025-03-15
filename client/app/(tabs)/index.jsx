@@ -19,7 +19,7 @@ const Index = () => {
       <View style={styles.content}>
         <View style={styles.actionSection}>
           <ActionCard
-            onPress={() => router.push('chatbot/chatg')} // Correct the navigation path
+            onPress={() => router.push('survey/home')} // Correct the navigation path
             title="Fill the 
             Form to 
             identify 
