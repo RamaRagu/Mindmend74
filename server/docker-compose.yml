@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  mindmend-backend:
+    image: rama028/mindmend-backend:latest
+    container_name: Mindmend Backend
+    ports:
+      - "3000:3000"
+    restart: always
+    environment:
+      - NODE_ENV=production
+
+  mindmend-ml:
+    image: rama028/mindmend-ml:latest
+    container_name: Mindmend ML
+    ports:
+      - "5000:5000"
+    restart: always
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: Watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 60 --cleanup backend ml
+    restart: always
+
+networks:
+  default:
+    driver: bridge
