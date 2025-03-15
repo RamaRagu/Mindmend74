@@ -29,6 +29,15 @@ const Index = () => {
             imageStyle={styles.formImage}
             titleStyle={styles.formCardTitle}
           />
+          {/* <ActionCard
+            onPress={() => router.push('UserProfile/profile')} // Correct the navigation path
+            title="View Your 
+            Profile"
+            imageSource={formImage}
+            style={styles.formCard}
+            imageStyle={styles.formImage}
+            titleStyle={styles.formCardTitle}
+          /> */}
           <ActionCard
             onPress={() => router.push('chatbot/chatg')} // Correct the navigation path
             title="Chat With
