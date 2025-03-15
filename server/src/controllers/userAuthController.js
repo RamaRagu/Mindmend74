@@ -374,45 +374,11 @@ const handlePasswordRecovery = async (req, res) => {
   }
 };
 
-/**
- * Forward request to Supabase
- */
-const forwardRequestToSupabase = async (req, res) => {
-  const { token, type, redirect_to } = req.query;
-
-  if (!token || !type || !redirect_to) {
-    return res
-      .status(400)
-      .json({ message: "Missing required query parameters." });
-  }
-
-  try {
-    const response = await fetch(
-      `https://supabase.mysuuq.net/auth/v1/verify?token=${token}&type=${type}&redirect_to=${redirect_to}`,
-      {
-        method: "GET",
-      }
-    );
-
-    if (!response.ok) {
-      return res
-        .status(response.status)
-        .json({ message: "Error verifying token with Supabase." });
-    }
-
-    return res.status(200).json({ message: "Token verified successfully." });
-  } catch (error) {
-    console.error("Error forwarding request to Supabase:", error);
-    return res.status(500).json({ message: "Internal server error." });
-  }
-};
-
 module.exports = {
   signUp,
   signIn,
   signOut,
   updatePassword,
-  forwardRequestToSupabase,
   sendPasswordRecoveryEmail,
   handlePasswordRecovery,
   validatePasswordRecoveryOTP,
