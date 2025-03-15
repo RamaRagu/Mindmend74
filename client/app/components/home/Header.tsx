@@ -1,17 +1,22 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { UserAvatar } from "./UserAvatar";
+import { useRouter } from 'expo-router'; 
+
 
 export const Header: React.FC = () => {
+  const router = useRouter();
   return (
     <View style={styles.header}>
       <View style={styles.statusBar}>
       </View>
       <View style={styles.userInfo}>
         <View style={styles.userContainer}>
-          <UserAvatar
-            src="https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/49b635ab58300e9cfc3137f545b875ef0653985ba8d5445e2348184732056ea0"
-          />
+          <TouchableOpacity onPress={() => router.push("/UserProfile/profile")}>
+            <UserAvatar
+              src="https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/49b635ab58300e9cfc3137f545b875ef0653985ba8d5445e2348184732056ea0"
+            />
+          </TouchableOpacity>
           <Text style={styles.greeting}>Hello Thenusha !</Text>
         </View>
         <TouchableOpacity>
