@@ -27,7 +27,7 @@ const HomeScreen = () => {
     }
   };
   const handleSubmit = () => {
-    router.push("/main");
+    router.push("/survey/main");
   };
 
   return (

@@ -23,7 +23,7 @@ const MainScreen = () => {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() => router.push("/home")}
+          onPress={() => router.push("/(tabs)")}
         >
           <Text style={styles.buttonText}>Back to Home</Text>
         </TouchableOpacity>
