@@ -46,7 +46,7 @@ jobs:
           if [[ "${{ github.ref_type }}" == "tag" ]]; then
             echo "tags=${{ secrets.DOCKER_USERNAME }}/mindmend-backend:${{ github.ref_name }},${{ secrets.DOCKER_USERNAME }}/mindmend-backend:latest" >> $GITHUB_ENV
           else
-            echo "tags=${{ secrets.DOCKER_USERNAME }}/mindmend-backend:${{ github.ref_name }}" >> $GITHUB_ENV
+            echo "tags=${{ secrets.DOCKER_USERNAME }}/mindmend-backend:latest" >> $GITHUB_ENV
           fi
         shell: bash
 
@@ -61,6 +61,7 @@ jobs:
       - name: Load image for scanning
         run: |
           docker load --input /tmp/image.tar
+          docker images
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
