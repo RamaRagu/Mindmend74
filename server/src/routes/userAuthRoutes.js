@@ -4,7 +4,6 @@ const {
   signIn,
   signOut,
   updatePassword,
-  forwardRequestToSupabase,
   sendPasswordRecoveryEmail,
   handlePasswordRecovery,
   validatePasswordRecoveryOTP,
@@ -35,11 +34,5 @@ router.post("/handle-password-recovery", handlePasswordRecovery);
 
 // Route to update Password
 router.put("/update-password", updatePassword);
-
-// Route to forward supabase requests
-router.get("/verify", (req, res, next) => {
-  console.log("Supabase request route hit");
-  forwardRequestToSupabase(req, res, next);
-});
 
 module.exports = router;
