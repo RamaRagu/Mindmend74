@@ -1,11 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { InputField } from "./InputField";
 import { SocialButton } from "./SocialButton";
 import { useRouter } from 'expo-router';
+import { auth } from '../../../config/Firebaseconfig';
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 export const RegisterForm: React.FC = () => {
+
   const router = useRouter();
+
+  const [email,setEmail]=useState('');
+  const [password,setPassword]=useState('');
+    
+  const OnCreateAccount=()=>{
+      
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed up 
+        const user = userCredential.user;
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // ..
+      });
+  }
 
   const handleSubmit = () => {
     // Handle form submission
@@ -71,7 +92,7 @@ export const RegisterForm: React.FC = () => {
       <View style={styles.footer}>
         <Text style={styles.footerText}>Already you have an account? </Text>
         <TouchableOpacity onPress={() => router.push('/login/signup')}>
-          <Text style={styles.signInText}>Sign up</Text>
+          <Text style={styles.signInText}>Sign in</Text>
         </TouchableOpacity>
       </View>
     </View>
