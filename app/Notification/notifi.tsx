@@ -3,7 +3,7 @@ import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { StatusBar as CustomStatusBar } from '../components/schedule/StatusBar';
 import { Header } from '../components/schedule/Header';
 import { Profile } from '../components/schedule/Profile';
-import { Calendar } from '../components/schedule/Calendar';
+import { Calendar } from '../components/schedule/Calender'; 
 import { Timeline } from '../components/schedule/Timeline';
 
 const HomeScreen = () => {

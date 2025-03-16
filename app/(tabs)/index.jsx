@@ -19,7 +19,7 @@ const Index = () => {
       <View style={styles.content}>
         <View style={styles.actionSection}>
           <ActionCard
-            onPress={() => router.push('Userprofile/profile')} // Correct the navigation path
+            onPress={() => router.push('components/account/AccountSidebar')} // Correct the navigation path
             title="Fill the 
             Form to 
             identify 
@@ -29,8 +29,17 @@ const Index = () => {
             imageStyle={styles.formImage}
             titleStyle={styles.formCardTitle}
           />
+          {/* <ActionCard
+            onPress={() => router.push('UserProfile/profile')} // Correct the navigation path
+            title="View Your 
+            Profile"
+            imageSource={formImage}
+            style={styles.formCard}
+            imageStyle={styles.formImage}
+            titleStyle={styles.formCardTitle}
+          /> */}
           <ActionCard
-            onPress={() => router.push('components/account/AccountSidebar')} // Correct the navigation path
+            onPress={() => router.push('Notification/notifi')} // Correct the navigation path
             title="Chat With
              me!"
             imageSource={chatImage}

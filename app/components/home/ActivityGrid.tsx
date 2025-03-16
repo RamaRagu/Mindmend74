@@ -19,7 +19,7 @@ export const ActivityGrid: React.FC = () => {
       </TouchableOpacity>
       <TouchableOpacity 
         style={styles.button}
-        onPress={() => router.push('/Notification/notifi')} // Correct the navigation path
+        onPress={() => router.push('/chatbot/chatg')} // Correct the navigation path
       >
         <Image 
           source={require('../../../assets/images/games.png')} 

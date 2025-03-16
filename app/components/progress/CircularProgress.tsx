@@ -1,14 +1,37 @@
 import React from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import CircularProgress from 'react-native-circular-progress-indicator';
 
-export const CircularProgress = () => {
+export const CustomCircularProgress = () => {
   return (
     <View style={styles.container}>
-      <Image
-        source={{
-          uri: 'https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/b90fffc388c0b29b2f60c27996e1b49c0deb007a8ea16a8f988cabbcdd084665'
-        }}
-        style={styles.progressImage}
+      <CircularProgress
+        value={60}
+        radius={120}
+        progressValueColor={'#ecf0f1'}
+        activeStrokeColor={'#f39c12'}
+        inActiveStrokeColor={'#9b59b6'}
+        inActiveStrokeOpacity={0.5}
+        inActiveStrokeWidth={20}
+        activeStrokeWidth={40}
+      />
+      <CircularProgress
+        value={60}
+        radius={120}
+        progressValueColor={'#ecf0f1'}
+        activeStrokeColor={'#f39c12'}
+        inActiveStrokeColor={'#9b59b6'}
+        inActiveStrokeOpacity={0.5}
+        inActiveStrokeWidth={40}
+        activeStrokeWidth={20}
+      />
+      <CircularProgress
+        value={60}
+        radius={120}
+        inActiveStrokeOpacity={0.5}
+        activeStrokeWidth={20}
+        inActiveStrokeWidth={20}
+        progressValueStyle={{ fontWeight: '100', color: 'yellow' }}
       />
     </View>
   );
@@ -17,10 +40,8 @@ export const CircularProgress = () => {
 const styles = StyleSheet.create({
   container: {
     position: 'relative',
-  },
-  progressImage: {
-    width: 259,
-    height: 259,
-    aspectRatio: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
   },
 });

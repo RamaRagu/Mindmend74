@@ -17,14 +17,13 @@ export const Header = () => {
       <View style={styles.iconsContainer}>
         <Image
           source={{
-            uri: "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/869020650292f3f1f3b851b8f012f660c94dadf0ffa1aa53052345ec5dfa0b00"
+           
           }}
           style={styles.icon1}
         />
         <Image
           source={{
-            uri: "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/bdda6abdda828100bf61cada2d859255834c874c6c717e8580247ffee898c83b"
-          }}
+            }}
           style={styles.icon2}
         />
         <Image
