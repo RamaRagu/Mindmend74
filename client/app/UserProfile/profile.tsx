@@ -23,7 +23,7 @@ const ProfileNative = () => {
     const router = useRouter();
 
     const [formData, setFormData] = React.useState<ProfileFormData>({
-        fullname: "Thenusha Srishkantharaja",
+        fullname: "",
         dateOfBirth: "",
         gender: "Male",
         mobileNumber: "",
@@ -53,6 +53,7 @@ const ProfileNative = () => {
                 <FormSectionNative title="Basic Detail">
                     <FormFieldNative label="Fullname">
                         <InputNative
+                            placeholder="Enter your fullname"
                             value={formData.fullname}
                             onChangeText={handleInputChange("fullname")}
                         />
@@ -80,6 +81,7 @@ const ProfileNative = () => {
                 <FormSectionNative title="Contact Detail">
                     <FormFieldNative label="Mobile number">
                         <InputNative
+                            placeholder="Enter your mobile number"
                             keyboardType="phone-pad"
                             value={formData.mobileNumber}
                             onChangeText={handleInputChange("mobileNumber")}
@@ -87,6 +89,7 @@ const ProfileNative = () => {
                     </FormFieldNative>
                     <FormFieldNative label="Email">
                         <InputNative
+                            placeholder="Enter your email"
                             keyboardType="email-address"
                             value={formData.email}
                             onChangeText={handleInputChange("email")}
