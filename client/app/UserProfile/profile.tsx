@@ -45,7 +45,7 @@ const ProfileNative = () => {
 
     return (
         <View style={styles.container}>
-            <StatusBarNative />
+            
             <HeaderNative title="My Profile" onBack={() => router.push("/(tabs)")} />
             <ProfileSectionNative imageUrl="https://cdn.builder.io/api/v1/image/assets/TEMP/873a0cbd1acbb21191bcb437ba32d933ac38921b" />
 

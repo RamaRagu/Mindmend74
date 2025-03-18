@@ -18,7 +18,7 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({ src }) => {
 
 const styles = StyleSheet.create({
   avatar: {
-    width: 44,
+    width: 50,
     height: 44,
     borderRadius: 22,
     shadowColor: "#042558",
