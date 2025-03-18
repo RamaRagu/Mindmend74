@@ -68,11 +68,11 @@ const ProfileNative = () => {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
             <StatusBarNative />
-            <HeaderNative title="My Profile" onBack={() => router.push("/(tabs)")} />
-            <ProfileSectionNative imageUrl={formData.imageUrl} />
-            <Button title="Edit" onPress={handleImagePick} color={styles.buttonText.color} />
-
             <ScrollView style={styles.formContainer}>
+                <HeaderNative title="My Profile" onBack={() => router.push("/(tabs)")} />
+                <ProfileSectionNative imageUrl={formData.imageUrl} />
+                <Button title="Edit" onPress={handleImagePick} color={styles.buttonText.color} />
+
                 <FormSectionNative title="Basic Detail">
                     <FormFieldNative label="Fullname">
                         <InputNative
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     buttonText: {
-        color: "#000000", 
+        color: "#000000", // Replace with the color used in the "Basic Detail" section
     },
 });
 
