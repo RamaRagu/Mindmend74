@@ -1,7 +1,6 @@
 import React from "react";
 import { View, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Button, Image } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
-import { StatusBarNative } from "../components/profile/StatusBarNative";
 import { HeaderNative } from "../components/profile/HeaderNative";
 import { ProfileSectionNative } from "../components/profile/ProfileSectionNative";
 import { FormSectionNative, FormFieldNative } from "../components/profile/FormSectionNative";
@@ -67,26 +66,32 @@ const ProfileNative = () => {
             style={styles.container}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <StatusBarNative />
-            <ScrollView style={styles.formContainer}>
+            <View style={styles.fixedHeader}>
                 <HeaderNative title="My Profile" onBack={() => router.push("/(tabs)")} />
+            </View>
+            <ScrollView style={styles.scrollContainer}>
                 <ProfileSectionNative imageUrl={formData.imageUrl} />
                 <Button title="Edit" onPress={handleImagePick} color={styles.buttonText.color} />
-
                 <FormSectionNative title="Basic Detail">
                     <FormFieldNative label="Fullname">
+                    <View style={{ width: 400 }}>
                         <InputNative
                             placeholder="Enter Your Name"
                             value={formData.fullname}
                             onChangeText={handleInputChange("fullname")}
+                            
+                        
                         />
+                    </View>    
                     </FormFieldNative>
                     <FormFieldNative label="Date of Birth">
+                    <View style={{ width: 400 }}>
                         <InputNative
                             placeholder="YYYY-MM-DD"
                             value={formData.dateOfBirth}
                             onChangeText={handleInputChange("dateOfBirth")}
                         />
+                    </View>     
                     </FormFieldNative>
                     <FormFieldNative label="Gender">
                         <SelectNative
@@ -103,23 +108,28 @@ const ProfileNative = () => {
 
                 <FormSectionNative title="Contact Detail">
                     <FormFieldNative label="Mobile number">
+                    <View style={{ width: 400 }}>
                         <InputNative
                             keyboardType="phone-pad"
                             value={formData.mobileNumber}
                             onChangeText={handleInputChange("mobileNumber")}
                         />
+                     </View>      
                     </FormFieldNative>
                     <FormFieldNative label="Email">
+                    <View style={{ width: 400 }}>
                         <InputNative
                             keyboardType="email-address"
                             value={formData.email}
                             onChangeText={handleInputChange("email")}
                         />
+                     </View>      
                     </FormFieldNative>
                 </FormSectionNative>
 
                 <FormSectionNative title="Personal Detail">
                     <FormFieldNative label="Weight (Kg)">
+                    <View style={{ width: 400 }}>
                         <InputNative
                             keyboardType="numeric"
                             value={formData.weight.toString()}
@@ -128,8 +138,10 @@ const ProfileNative = () => {
                                 handleInputChange("weight")(weight.toString());
                             }}
                         />
+                     </View>      
                     </FormFieldNative>
                     <FormFieldNative label="Height (cm)">
+                    <View style={{ width: 400 }}>
                         <InputNative
                             keyboardType="numeric"
                             value={formData.height.toString()}
@@ -138,6 +150,7 @@ const ProfileNative = () => {
                                 handleInputChange("height")(height.toString());
                             }}
                         />
+                     </View>      
                     </FormFieldNative>
                 </FormSectionNative>
 
@@ -153,16 +166,35 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "white",
-        maxWidth: 440,
+        maxWidth: 450,
         alignSelf: "center",
         width: "100%",
+        marginLeft: 20, 
+    },
+    fixedHeader: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1,
+        backgroundColor: 'white',
+        paddingHorizontal: 20,
+        paddingTop: Platform.OS === 'ios' ? 40 : 20, 
+        
+    },
+    scrollContainer: {
+        flex: 1,
+        marginTop: 150, 
     },
     formContainer: {
         paddingHorizontal: 20,
+        
     },
     buttonText: {
-        color: "#000000", // Replace with the color used in the "Basic Detail" section
+        color: "#000000", 
+        
     },
+    
 });
 
 export default ProfileNative;
