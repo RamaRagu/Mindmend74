@@ -1,16 +1,22 @@
 import React, { useState } from "react";
-import { View, Text, Image, ScrollView, StyleSheet, SafeAreaView } from "react-native";
+import { View, Text, ScrollView, StyleSheet, SafeAreaView, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ImageBackground, Image } from "react-native";
 import axios from "axios";
 
 import { ChatHeader } from "../components/chat/ChatHeader";
-import { ChatInput } from "../components/chat/ChatInput";
-import { ChatSuggestion } from "../components/chat/ChatSuggestion";
 
 const chatg = () => {
   const [messages, setMessages] = useState([]);
+  const [inputMessage, setInputMessage] = useState("");
+  const [hasSentMessage, setHasSentMessage] = useState(false);
 
   const handleSendMessage = async (message) => {
+    if (message.trim() === "") {
+      return; // Do not send an empty message
+    }
+
     setMessages([...messages, { text: message, sender: "user" }]);
+    setInputMessage("");
+    setHasSentMessage(true);
 
     try {
       const response = await axios.post("https://api.openai.com/v1/chat/completions", {
@@ -42,43 +48,71 @@ const chatg = () => {
   const suggestions = [
     "What are the therapy options are there?",
     "Any resources to understand Autism ?",
-    "How do i set reminder ?",
+    "How do I set a reminder?",
   ];
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.scrollView}>
-        <View style={styles.container}>
-          <View style={styles.mainColumn}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
+      >
+       
+          <ChatHeader />
+          <ScrollView contentContainerStyle={styles.scrollView}>
             <View style={styles.chatContainer}>
-            
-              <ChatHeader />
-
-              <Image
-                source={{
-                  uri: "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/1303764f2957090f03233a3d698b3901a76a36664cd1debec4abd322f27664f1",
-                }}
-                style={styles.chatBackground}
-              />
-
-              <View style={styles.suggestionsContainer}>
-                {suggestions.map((suggestion, index) => (
-                  <ChatSuggestion
-                    key={index}
-                    text={suggestion}
-                    onClick={() => handleSendMessage(suggestion)}
-                  />
-                ))}
-              </View>
-
-              <ChatInput onSend={handleSendMessage} />
-              
+              {!hasSentMessage && (
+                <Image
+                  source={require('../../assets/images/chat1.png')} // Correct path to your image
+                  style={styles.centerImage}
+                />
+              )}
+              {messages.map((message, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.messageBubble,
+                    message.sender === "user" ? styles.userBubble : styles.botBubble,
+                  ]}
+                >
+                  <Text style={message.sender === "user" ? styles.userMessageText : styles.botMessageText}>
+                    {message.text}
+                  </Text>
+                </View>
+              ))}
             </View>
-
-           
+          </ScrollView>
+          {!hasSentMessage && inputMessage === "" && (
+            <ScrollView horizontal contentContainerStyle={styles.suggestionsContainer}>
+              {suggestions.map((suggestion, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.suggestionBox}
+                  onPress={() => handleSendMessage(suggestion)}
+                >
+                  <Text style={styles.suggestionText}>{suggestion}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          )}
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              value={inputMessage}
+              onChangeText={setInputMessage}
+              placeholder="Type a message..."
+              placeholderTextColor="#888"
+              onSubmitEditing={() => handleSendMessage(inputMessage)}
+            />
+            <TouchableOpacity
+              style={styles.sendButton}
+              onPress={() => handleSendMessage(inputMessage)}
+            >
+              <Text style={styles.sendButtonText}>Send</Text>
+            </TouchableOpacity>
           </View>
-        </View>
-      </ScrollView>
+        
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
@@ -88,71 +122,91 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "rgba(4,37,88,1)",
   },
-  
   container: {
     flex: 1,
-    flexDirection: "row",
-    width: 500,
-    height: "100%",
-    marginHorizontal: "auto",
-    gap: 20,
   },
-  mainColumn: {
-    width: "78%",
-    flexDirection: "row",
-    gap: 20,
+  backgroundImage: {
+    flex: 1,
+    resizeMode: "cover",
+    justifyContent: "center",
+  },
+  scrollView: {
+    flexGrow: 1,
   },
   chatContainer: {
-    width: "100%",
-    backgroundColor: "rgba(4,37,88,1)",
-    flexDirection: "column",
-    overflow: "hidden",
-    paddingTop: 10,
-    paddingBottom: 0,
-    paddingHorizontal: 9,
+    flex: 1,
+    padding: 10,
+    justifyContent: "center", 
+    alignItems: "center", 
   },
-  chatBackground: {
-    width: "100%",
-    aspectRatio: 1.3,
-    resizeMode: "contain",
-    marginTop: 131,
-    borderRadius: 57,
+  centerImage: {
+    width: 600, 
+    height: 500, 
+    padding: 110,
+    borderRadius: 60,
+  },
+  messageBubble: {
+    padding: 10,
+    borderRadius: 10,
+    marginVertical: 5,
+    maxWidth: "80%",
+  },
+  userBubble: {
+    backgroundColor: "#007AFF",
+    alignSelf: "flex-end",
+  },
+  botBubble: {
+    backgroundColor: "#E5E5EA",
+    alignSelf: "flex-start",
+  },
+  userMessageText: {
+    color: "#fff",
+  },
+  botMessageText: {
+    color: "#000",
   },
   suggestionsContainer: {
     flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 11,
-    marginTop: 148,
+    flexWrap: "nowrap",
+    gap: 10,
+    marginVertical: 10,
+    paddingHorizontal: 10,
+    marginBottom: 10, 
   },
-  sideColumn1: {
-    width: "26%",
-    marginLeft: 20,
-  },
-  sideText1: {
-    color: "rgba(4,37,88,1)",
-    fontSize: 15,
-    fontWeight: "600",
-    lineHeight: 17,
-    textAlign: "center",
-    marginTop: 778,
-  },
-  sideColumn2: {
-    width: "22%",
-    marginLeft: 20,
-  },
-  sideContainer2: {
-    backgroundColor: "white",
-    width: "100%",
-    marginTop: 757,
-    paddingHorizontal: 9,
-    paddingVertical: 30,
+  suggestionBox: {
+    backgroundColor: "#fff",
+    padding: 5,
     borderRadius: 10,
+    marginRight: 10,
+    height: 70, 
+    justifyContent: "center", 
   },
-  sideText2: {
+  suggestionText: {
     color: "rgba(4,37,88,1)",
-    fontSize: 12,
-    fontWeight: "600",
-    textAlign: "center",
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+    backgroundColor: "#fff",
+    borderRadius: 30,
+  },
+  input: {
+    flex: 1,
+    height: 40,
+    paddingHorizontal: 10,
+    color: "#000",
+  },
+  sendButton: {
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    backgroundColor: "#007AFF",
+    borderRadius: 5,
+  },
+  sendButtonText: {
+    color: "#fff",
   },
 });
 
