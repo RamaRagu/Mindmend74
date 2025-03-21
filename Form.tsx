@@ -31,7 +31,7 @@ const ProfileNative = () => {
         email: "",
         weight: 0,
         height: 0,
-        imageUrl: "https://cdn.builder.io/api/v1/image/assets/TEMP/873a0cbd1acbb21191bcb437ba32d933ac38921b",
+        imageUrl: "https://cdn.builder.io/api/v1/image/assets/TEMP/eb455c48e2cf6e2d2c5090ab15c59424a2046c0e",
     });
 
     const handleInputChange = (field: keyof ProfileFormData) => (value: string) => {
@@ -111,6 +111,7 @@ const ProfileNative = () => {
                         <View style={{ width: 400 }}>
                             <InputNative
                                 keyboardType="phone-pad"
+                                placeholder="Enter Your Number"
                                 value={formData.mobileNumber}
                                 onChangeText={handleInputChange("mobileNumber")}
                                 style={styles.inputBox}
@@ -121,6 +122,7 @@ const ProfileNative = () => {
                         <View style={{ width: 400 }}>
                             <InputNative
                                 keyboardType="email-address"
+                                placeholder="Enter Your Email"
                                 value={formData.email}
                                 onChangeText={handleInputChange("email")}
                                 style={styles.inputBox}
