@@ -1,5 +1,6 @@
 import React, { FC } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 import BackArrow from "../icons/BackArrow";
 import ProfileSection from "./ProfileSection";
 import NavigationItems from "./NavigationItems";
@@ -18,24 +19,33 @@ const AccountSidebar: FC<AccountSidebarProps> = ({
   username,
   avatarUrl,
 }) => {
+  const navigation = useNavigation(); // Initialize navigation
+
   const navigationItems = [
     {
       icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/863e27777ae8915d39b6ccd03ac6adc61557bd1d",
       label: "My Profile",
+      path: "UserProfile/profile",
     },
     {
       icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/31ab7bf255e3cd2ab7897a7a0b3b3fc6c35c480b",
       label: "About app",
+      path: "/about",
     },
     {
       icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/24b89fd525b96f3449c441479ff3213029a9c27d",
       label: "Setting",
+      path: "/settings",
     },
   ];
 
+  const handleNavigation = (path: string) => {
+    // Use navigation to navigate to the specified path
+    navigation.navigate(path as never);
+  };
+
   const handleViewProfile = () => {
-    // Handle view profile click
-    console.log("View profile clicked");
+    handleNavigation("UserProfile/profile");
   };
 
   return (
@@ -45,7 +55,6 @@ const AccountSidebar: FC<AccountSidebarProps> = ({
         <Text style={styles.title}>Account</Text>
       </View>
 
-      {/* Add the image below the back arrow */}
       <Image
         source={{ uri: "https://cdn.builder.io/api/v1/image/assets/TEMP/873a0cbd1acbb21191bcb437ba32d933ac38921b" }}
         style={styles.headerImage}
@@ -57,7 +66,7 @@ const AccountSidebar: FC<AccountSidebarProps> = ({
         onViewProfile={handleViewProfile}
       />
 
-      <NavigationItems items={navigationItems} />
+      <NavigationItems items={navigationItems} onItemPress={handleNavigation} />
 
       <LogoutButton onLogout={onLogout} />
     </View>
@@ -87,12 +96,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   headerImage: {
-    width: 100, // Adjust the width as needed
-    height: 100, // Adjust the height as needed
-    borderRadius: 50, // Half of the width/height to make it circular
+    width: 100, 
+    height: 100, 
+    borderRadius: 50, 
     resizeMode: 'cover',
     marginVertical: 20,
-    alignSelf: 'flex-start', // Align the image to the left
+    alignSelf: 'flex-start', 
     marginLeft: 10,
   },
 });
