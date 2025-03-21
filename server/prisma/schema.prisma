@@ -36,17 +36,18 @@ model Parent {
 }
 
 model Child {
-  id              String           @id @default(uuid()) @map("_id") @db.Uuid
-  parentId        String           @db.Uuid
-  parent          Parent           @relation(fields: [parentId], references: [id])
+  id              String               @id @default(uuid()) @map("_id") @db.Uuid
+  parentId        String               @db.Uuid
+  parent          Parent               @relation(fields: [parentId], references: [id])
   name            String
   age             Int
-  autismLevel     String           @default("MILD") // Possible values: MILD, MODERATE, SEVERE
+  autismLevel     String               @default("MILD") // Possible values: MILD, MODERATE, SEVERE
   progressNotes   Json?
   sessionHistory  Json?
   therapySessions TherapySession[]
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  ebookProgress   ChildEbookProgress[] // New relation
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
 }
 
 model Doctor {
@@ -75,4 +76,38 @@ model TherapySession {
   reminderUrl String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+model Ebook {
+    id          Int      @id @default(autoincrement())
+    title       String
+    author      String
+    illustrator String
+    bookNumber  Int
+    description String
+    categories  String   // Stored as a JSON string or comma-separated values
+    readingTimeMin Int
+    content     String   // JSON string containing pages
+    difficulty  String
+    isActive    Boolean
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+  // Optional relationship to Child if you want to track reading progress
+  childReads  ChildEbookProgress[]
+}
+
+// Model to track children's progress with ebooks
+model ChildEbookProgress {
+  id          String   @id @default(uuid()) @map("_id") @db.Uuid
+  childId     String   @db.Uuid
+  ebookId     Int
+  child       Child    @relation(fields: [childId], references: [id])
+  ebook       Ebook    @relation(fields: [ebookId], references: [id])
+  progress    Int      @default(0) // Percentage of completion
+  lastPage    Int      @default(0)
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([childId, ebookId])
 }
