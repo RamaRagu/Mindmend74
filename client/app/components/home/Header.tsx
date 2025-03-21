@@ -36,9 +36,10 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingLeft: 26,
     paddingRight: 13,
-    paddingTop: 27,
+    paddingTop: 40,
     paddingBottom: 177,
     borderRadius: 20,
+    marginTop: -20,
   },
   statusBar: {
     flexDirection: "row",
