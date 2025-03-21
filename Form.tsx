@@ -1,5 +1,5 @@
-import React, { useRef } from "react";
-import { View, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Button, TextInput } from "react-native";
+import React from "react";
+import { View, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Button, Image } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
 import { HeaderNative } from "../components/profile/HeaderNative";
 import { ProfileSectionNative } from "../components/profile/ProfileSectionNative";
@@ -34,15 +34,6 @@ const ProfileNative = () => {
         imageUrl: "https://cdn.builder.io/api/v1/image/assets/TEMP/873a0cbd1acbb21191bcb437ba32d933ac38921b",
     });
 
-    const [editableField, setEditableField] = React.useState<string | null>(null);
-
-    const fullnameRef = useRef<TextInput>(null);
-    const dateOfBirthRef = useRef<TextInput>(null);
-    const mobileNumberRef = useRef<TextInput>(null);
-    const emailRef = useRef<TextInput>(null);
-    const weightRef = useRef<TextInput>(null);
-    const heightRef = useRef<TextInput>(null);
-
     const handleInputChange = (field: keyof ProfileFormData) => (value: string) => {
         setFormData((prev) => ({
             ...prev,
@@ -70,20 +61,13 @@ const ProfileNative = () => {
         console.log("Form data:", formData);
     };
 
-    const handleEdit = (field: string, ref: React.RefObject<TextInput>) => {
-        setEditableField(field);
-        setTimeout(() => {
-            ref.current?.focus();
-        }, 100);
-    };
-
     return (
         <KeyboardAvoidingView
             style={styles.container}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
             <View style={styles.fixedHeader}>
-                <HeaderNative title="My Profile" onBack={() => router.push("/(tabs)")} />
+                <HeaderNative title="Fill the form" onBack={() => router.push("/(tabs)")} />
             </View>
             <ScrollView style={styles.scrollContainer}>
                 <ProfileSectionNative imageUrl={formData.imageUrl} />
@@ -92,27 +76,21 @@ const ProfileNative = () => {
                     <FormFieldNative label="Fullname">
                         <View style={{ width: 400 }}>
                             <InputNative
-                                ref={fullnameRef}
+                                placeholder="Enter Your Name"
                                 value={formData.fullname}
                                 onChangeText={handleInputChange("fullname")}
-                                editable={editableField === "fullname"}
+                                style={styles.inputBox}
                             />
-                            <View style={{ marginLeft: 350, marginTop: -35 }}>
-                                <Button title="Edit" onPress={() => handleEdit("fullname", fullnameRef)} color={styles.buttonText.color} />
-                            </View>
                         </View>
                     </FormFieldNative>
                     <FormFieldNative label="Date of Birth">
                         <View style={{ width: 400 }}>
                             <InputNative
-                                ref={dateOfBirthRef}
+                                placeholder="YYYY-MM-DD"
                                 value={formData.dateOfBirth}
                                 onChangeText={handleInputChange("dateOfBirth")}
-                                editable={editableField === "dateOfBirth"}
+                                style={styles.inputBox}
                             />
-                            <View style={{ marginLeft: 350, marginTop: -35 }}>
-                                <Button title="Edit" onPress={() => handleEdit("dateOfBirth", dateOfBirthRef)} color={styles.buttonText.color} />
-                            </View>
                         </View>
                     </FormFieldNative>
                     <FormFieldNative label="Gender">
@@ -132,29 +110,21 @@ const ProfileNative = () => {
                     <FormFieldNative label="Mobile number">
                         <View style={{ width: 400 }}>
                             <InputNative
-                                ref={mobileNumberRef}
                                 keyboardType="phone-pad"
                                 value={formData.mobileNumber}
                                 onChangeText={handleInputChange("mobileNumber")}
-                                editable={editableField === "mobileNumber"}
+                                style={styles.inputBox}
                             />
-                            <View style={{ marginLeft: 350, marginTop: -35 }}>
-                                <Button title="Edit" onPress={() => handleEdit("mobileNumber", mobileNumberRef)} color={styles.buttonText.color} />
-                            </View>
                         </View>
                     </FormFieldNative>
                     <FormFieldNative label="Email">
                         <View style={{ width: 400 }}>
                             <InputNative
-                                ref={emailRef}
                                 keyboardType="email-address"
                                 value={formData.email}
                                 onChangeText={handleInputChange("email")}
-                                editable={editableField === "email"}
+                                style={styles.inputBox}
                             />
-                            <View style={{ marginLeft: 350, marginTop: -35 }}>
-                                <Button title="Edit" onPress={() => handleEdit("email", emailRef)} color={styles.buttonText.color} />
-                            </View>
                         </View>
                     </FormFieldNative>
                 </FormSectionNative>
@@ -163,35 +133,27 @@ const ProfileNative = () => {
                     <FormFieldNative label="Weight (Kg)">
                         <View style={{ width: 400 }}>
                             <InputNative
-                                ref={weightRef}
                                 keyboardType="numeric"
                                 value={formData.weight.toString()}
                                 onChangeText={(text) => {
                                     const weight = parseFloat(text) || 0;
                                     handleInputChange("weight")(weight.toString());
                                 }}
-                                editable={editableField === "weight"}
+                                style={styles.inputBox}
                             />
-                            <View style={{ marginLeft: 350, marginTop: -35 }}>
-                                <Button title="Edit" onPress={() => handleEdit("weight", weightRef)} color={styles.buttonText.color} />
-                            </View>
                         </View>
                     </FormFieldNative>
                     <FormFieldNative label="Height (cm)">
                         <View style={{ width: 400 }}>
                             <InputNative
-                                ref={heightRef}
                                 keyboardType="numeric"
                                 value={formData.height.toString()}
                                 onChangeText={(text) => {
                                     const height = parseFloat(text) || 0;
                                     handleInputChange("height")(height.toString());
                                 }}
-                                editable={editableField === "height"}
+                                style={styles.inputBox}
                             />
-                            <View style={{ marginLeft: 350, marginTop: -35 }}>
-                                <Button title="Edit" onPress={() => handleEdit("height", heightRef)} color={styles.buttonText.color} />
-                            </View>
                         </View>
                     </FormFieldNative>
                 </FormSectionNative>
@@ -211,7 +173,7 @@ const styles = StyleSheet.create({
         maxWidth: 450,
         alignSelf: "center",
         width: "100%",
-        marginLeft: 20,
+        marginLeft: 20, 
     },
     fixedHeader: {
         position: 'absolute',
@@ -221,17 +183,28 @@ const styles = StyleSheet.create({
         zIndex: 1,
         backgroundColor: 'white',
         paddingHorizontal: 20,
-        paddingTop: Platform.OS === 'ios' ? 40 : 20,
+        paddingTop: Platform.OS === 'ios' ? 40 : 20, 
     },
     scrollContainer: {
         flex: 1,
-        marginTop: 150,
+        marginTop: 150, 
     },
     formContainer: {
         paddingHorizontal: 20,
     },
     buttonText: {
-        color: "#000000",
+        color: "#000000", 
+    },
+    inputBox: {
+        borderWidth: 1,
+        borderColor: "#cccccc",
+        borderRadius: 5,
+        padding: 10,
+        backgroundColor: "#f9f9f9",
+        color: "#333333",
+    },
+    inputBoxFocused: {
+        borderColor: "#007BFF",
     },
 });
 
