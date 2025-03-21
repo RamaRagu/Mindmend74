@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: "column",
     alignItems: "stretch",
-    marginTop: 8,
+    marginTop: 5,
   },
   plusSign: {
     fontSize: 20,
@@ -72,13 +72,13 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: "600",
-    color: "rgba(4,37,88,1)",
+    color: "rgb(255, 255, 255)",
     marginTop: 0,
     alignContent: "center",
     justifyContent: "center",
-    marginLeft: 50,
+    marginLeft: 65,
   },
   iconsContainer: {
     flexDirection: "row",

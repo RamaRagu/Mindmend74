@@ -44,9 +44,10 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    color: "rgba(5,31,72,1)",
+    color: "rgb(255, 255, 255)",
     fontWeight: "500",
     alignSelf: "center",
-    marginTop: -0,
+    marginTop: 8,
+    zIndex: 20,
   },
 });
