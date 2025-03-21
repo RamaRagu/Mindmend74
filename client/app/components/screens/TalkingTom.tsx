@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   Dimensions,
   Platform,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { GLView, ExpoWebGLRenderingContext } from "expo-gl";
@@ -15,6 +16,8 @@ import { Asset } from "expo-asset";
 import { GLTFLoader, GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 import * as THREE from "three";
 import { Ionicons } from "@expo/vector-icons";
+import { Audio } from 'expo-av';
+import * as FileSystem from 'expo-file-system';
 
 const { width, height } = Dimensions.get("window");
 
@@ -22,10 +25,42 @@ const TalkingTom = () => {
   const navigation = useNavigation();
   const [modelReady, setModelReady] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [audioPermission, setAudioPermission] = useState(false);
+  const [recordedURI, setRecordedURI] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [playbackObject, setPlaybackObject] = useState<Audio.Sound | null>(null);
+  
   const timeoutRef = useRef<number>();
   const modelRef = useRef<THREE.Group>();
   const mixerRef = useRef<THREE.AnimationMixer>();
   const animationsRef = useRef<THREE.AnimationClip[]>([]);
+  const recordingRef = useRef<Audio.Recording | null>(null);
+  const animationIntensityRef = useRef<number>(0.5); // Mouth movement intensity
+  const activeActionRef = useRef<THREE.AnimationAction | null>(null);
+  
+  // Request audio permissions on component mount
+  useEffect(() => {
+    const getPermissions = async () => {
+      try {
+        const { status } = await Audio.requestPermissionsAsync();
+        setAudioPermission(status === 'granted');
+        if (status !== 'granted') {
+          Alert.alert('Permission required', 'Audio recording permission is required to use this feature');
+        }
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: true,
+          playsInSilentModeIOS: true,
+          shouldDuckAndroid: true,
+          playThroughEarpieceAndroid: false,
+          staysActiveInBackground: false,
+        });
+      } catch (error) {
+        console.error('Error requesting audio permissions:', error);
+      }
+    };
+    
+    getPermissions();
+  }, []);
 
   const onContextCreate = async (gl: WebGLRenderingContext) => {
     const { drawingBufferWidth: width, drawingBufferHeight: height } = gl;
@@ -84,7 +119,7 @@ const TalkingTom = () => {
 
       // Position and rotate the model to face forward
       model.position.set(0, -2, 0);
-      model.rotation.y = 0; // Changed from Math.PI to 0 to turn 180 degrees
+      model.rotation.y = 0; 
 
       scene.add(model);
       setModelReady(true);
@@ -107,7 +142,13 @@ const TalkingTom = () => {
       lastTime = time;
 
       if (mixerRef.current) {
+        // Update the animation mixer
         mixerRef.current.update(deltaTime);
+        
+        // Adjust the timeScale of the active action based on intensity
+        if (activeActionRef.current) {
+          activeActionRef.current.timeScale = animationIntensityRef.current;
+        }
       }
 
       renderer.render(scene, camera);
@@ -121,6 +162,7 @@ const TalkingTom = () => {
 
     // Stop any existing animations
     mixerRef.current.stopAllAction();
+    activeActionRef.current = null; // Reset the active action
 
     // Try to find the best talking animation
     const talkingAnimation = animationsRef.current.find(
@@ -134,18 +176,22 @@ const TalkingTom = () => {
     if (talkingAnimation) {
       console.log("Playing animation:", talkingAnimation.name);
       const action = mixerRef.current.clipAction(talkingAnimation);
+      action.reset();
       action.setLoop(THREE.LoopRepeat, Infinity);
-      action.setDuration(0.5); // Make the animation faster
+      action.setEffectiveTimeScale(0.5); // Base timeScale
+      action.setEffectiveWeight(1);
       action.play();
+      activeActionRef.current = action; // Store active action
     } else if (animationsRef.current.length > 0) {
       // If no talking animation found, use the first available one
-      console.log(
-        "No talking animation found, using:",
-        animationsRef.current[0].name
-      );
+      console.log("No talking animation found, using:", animationsRef.current[0].name);
       const action = mixerRef.current.clipAction(animationsRef.current[0]);
+      action.reset();
       action.setLoop(THREE.LoopRepeat, Infinity);
+      action.setEffectiveTimeScale(0.5); // Base timeScale
+      action.setEffectiveWeight(1);
       action.play();
+      activeActionRef.current = action; // Store active action
     }
   };
 
@@ -154,25 +200,182 @@ const TalkingTom = () => {
     mixerRef.current.stopAllAction();
   };
 
-  const handleRecordingPress = () => {
-    setIsRecording(!isRecording);
-    if (!isRecording) {
+  // Start recording function
+  const startRecording = async () => {
+    if (!audioPermission) {
+      Alert.alert('Permission required', 'Audio recording permission is required to use this feature');
+      return;
+    }
+
+    try {
+      // Prepare recording
+      const recording = new Audio.Recording();
+      await recording.prepareToRecordAsync({
+        android: {
+          extension: '.m4a',
+          outputFormat: Audio.AndroidOutputFormat.MPEG_4,
+          audioEncoder: Audio.AndroidAudioEncoder.AAC,
+          sampleRate: 44100,
+          numberOfChannels: 2,
+          bitRate: 128000,
+        },
+        ios: {
+          extension: '.m4a',
+          outputFormat: Audio.IOSOutputFormat.MPEG4AAC,
+          audioQuality: Audio.IOSAudioQuality.HIGH,
+          sampleRate: 44100,
+          numberOfChannels: 2,
+          bitRate: 128000,
+          linearPCMBitDepth: 16,
+          linearPCMIsBigEndian: false,
+          linearPCMIsFloat: false,
+        },
+        web: {
+          mimeType: 'audio/webm',
+          bitsPerSecond: 128000,
+        },
+      });
+      
+      // Start recording
+      await recording.startAsync();
+      recordingRef.current = recording;
+      
+      // Start animation
       startTalking();
-    } else {
+      
+      // Set up audio data subscription to adjust mouth movement
+      recording.setOnRecordingStatusUpdate(status => {
+        if (status.isRecording) {
+          // Update animation intensity based on recording metrics (dBFS)
+          const dB = status.metering || -160; // dBFS value or default to very quiet
+          const normalizedDb = Math.max(-60, Math.min(0, dB)) / -60; // Normalize between 0 and 1
+          const intensity = 0.5 + normalizedDb * 1.5; // Scale appropriately
+          animationIntensityRef.current = intensity;
+          updateMouthAnimation(intensity);
+        }
+      });
+      
+      setIsRecording(true);
+    } catch (error) {
+      console.error('Error starting recording:', error);
+      Alert.alert('Recording error', 'Could not start recording');
+    }
+  };
+
+  // Stop recording function
+  const stopRecording = async () => {
+    if (!recordingRef.current) return;
+
+    try {
+      await recordingRef.current.stopAndUnloadAsync();
+      const uri = recordingRef.current.getURI();
+      setRecordedURI(uri);
+      recordingRef.current = null;
+      
+      // Stop animation
       stopTalking();
+      
+      setIsRecording(false);
+    } catch (error) {
+      console.error('Error stopping recording:', error);
+      Alert.alert('Recording error', 'Could not stop recording');
+    }
+  };
+
+  // Play recording function
+  const playRecording = async () => {
+    if (!recordedURI) return;
+    
+    try {
+      // Unload any existing playback
+      if (playbackObject) {
+        await playbackObject.unloadAsync();
+      }
+      
+      // Create new sound object
+      const sound = new Audio.Sound();
+      await sound.loadAsync({ uri: recordedURI });
+      
+      // Set up status monitoring for mouth movement sync
+      sound.setOnPlaybackStatusUpdate((status) => {
+        if (status.isLoaded && !status.isBuffering) {
+          if (status.isPlaying) {
+            const positionMillis = status.positionMillis || 0;
+            const oscillation = Math.sin(positionMillis / 100) * 0.5 + 0.5;
+            const intensity = oscillation * 2;
+            animationIntensityRef.current = intensity;
+            updateMouthAnimation(intensity);
+          } else if (status.didJustFinish) {
+            stopTalking();
+            setIsPlaying(false);
+          }
+        }
+      });
+      
+      // Start playback and animation
+      await sound.playAsync();
+      setPlaybackObject(sound);
+      setIsPlaying(true);
+      startTalking();
+    } catch (error) {
+      console.error('Error playing recording:', error);
+      Alert.alert('Playback error', 'Could not play recording');
+    }
+  };
+
+  // Handle recording button press
+  const handleRecordingPress = () => {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      startRecording();
+    }
+  };
+
+  // Handle playback button press
+  const handlePlaybackPress = () => {
+    if (isPlaying) {
+      if (playbackObject) {
+        playbackObject.stopAsync();
+        setIsPlaying(false);
+        stopTalking();
+      }
+    } else {
+      playRecording();
     }
   };
 
   useEffect(() => {
     return () => {
+      // Clean up on unmount
       if (timeoutRef.current) {
         cancelAnimationFrame(timeoutRef.current);
       }
       if (mixerRef.current) {
         mixerRef.current.stopAllAction();
       }
+      if (recordingRef.current) {
+        recordingRef.current.stopAndUnloadAsync();
+      }
+      if (playbackObject) {
+        playbackObject.unloadAsync();
+      }
     };
   }, []);
+
+  // This function could be called whenever you get new audio data
+  const updateMouthAnimation = (intensity: number) => {
+    if (!activeActionRef.current) return;
+    
+    // Clamp the intensity between 0.2 and 2.0 for reasonable animation speed
+    const clampedIntensity = Math.max(0.2, Math.min(2.0, intensity));
+    
+    // Set the time scale of the animation
+    activeActionRef.current.timeScale = clampedIntensity;
+    
+    // You could also adjust weight for more natural transitions
+    // activeActionRef.current.setEffectiveWeight(Math.min(1.0, intensity * 0.5 + 0.5));
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -216,11 +419,23 @@ const TalkingTom = () => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.button, styles.playButton]}
-            disabled={!isRecording}
+            style={[
+              styles.button, 
+              styles.playButton, 
+              recordedURI ? {} : { opacity: 0.5 },
+              isPlaying && styles.playingButton
+            ]}
+            disabled={!recordedURI || isRecording}
+            onPress={handlePlaybackPress}
           >
-            <Ionicons name="play" size={24} color="white" />
-            <Text style={styles.buttonText}>Play Back</Text>
+            <Ionicons 
+              name={isPlaying ? "pause" : "play"} 
+              size={24} 
+              color="white" 
+            />
+            <Text style={styles.buttonText}>
+              {isPlaying ? "Stop Playback" : "Play Back"}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -343,7 +558,17 @@ const styles = StyleSheet.create({
   },
   playButton: {
     backgroundColor: "#2C2C2E",
-    opacity: 0.8,
+  },
+  playingButton: {
+    backgroundColor: "#34C759",
+    shadowColor: "#34C759",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
   buttonText: {
     color: "#FFFFFF",
