@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 
@@ -9,8 +10,12 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   greeting = "Welcome to Mindy"
 }) => {
   const handleAvatarPress = () => {
-    console.log("Avatar pressed");
+    router.push('/(tabs)');
     // Add your navigation or other action here
+  };
+
+  const handleSurveyPress = () => {
+    
   };
 
   return (
