@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import { useNavigation } from '@react-navigation/native'; 
 import BackArrow from "../icons/BackArrow";
 import ProfileSection from "./ProfileSection";
 import NavigationItems from "./NavigationItems";
@@ -19,7 +19,7 @@ const AccountSidebar: FC<AccountSidebarProps> = ({
   username,
   avatarUrl,
 }) => {
-  const navigation = useNavigation(); // Initialize navigation
+  const navigation = useNavigation(); 
 
   const navigationItems = [
     {

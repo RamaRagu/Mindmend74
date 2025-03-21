@@ -1,5 +1,5 @@
-import React, { FC } from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import React, { FC, useState } from "react";
+import { View, Text, Image, TouchableOpacity, StyleSheet, Modal } from "react-native";
 
 interface ProfileSectionProps {
   username: string;
@@ -12,6 +12,8 @@ const ProfileSection: FC<ProfileSectionProps> = ({
   avatarUrl,
   onViewProfile,
 }) => {
+  const [modalVisible, setModalVisible] = useState(false);
+
   return (
     <>
       <View style={styles.headerContainer}>
@@ -24,11 +26,31 @@ const ProfileSection: FC<ProfileSectionProps> = ({
       <View style={styles.profileContainer}>
         <View style={styles.profileInfo}>
           <Text style={styles.username}>{username}</Text>
-          <TouchableOpacity onPress={onViewProfile}>
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
             <Text style={[styles.viewProfile, styles.viewProfileMargin]}>View profile</Text>
           </TouchableOpacity>
         </View>
       </View>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Image
+              source={{ uri: "https://cdn.builder.io/api/v1/image/assets/TEMP/873a0cbd1acbb21191bcb437ba32d933ac38921b" }}
+              style={styles.largeAvatar}
+              resizeMode="cover" // Ensure the image covers the entire area
+            />
+            <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <Text style={styles.closeButton}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </>
   );
 };
@@ -74,7 +96,34 @@ const styles = StyleSheet.create({
   },
   viewProfileMargin: {
     marginLeft: 108, // Adjust this value to move the text to the right
-  }
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: 300,
+    height: 300,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    marginLeft: -90,
+    marginTop: -330,
+  },
+  largeAvatar: {
+    width: 250,
+    height: 250,
+    borderRadius: 0, // Set to 0 to make the image square
+    resizeMode: 'cover', // Ensure the image covers the entire area
+  },
+  closeButton: {
+    marginTop: 20,
+    color: '#042558',
+    fontSize: 18,
+  },
 });
 
 export default ProfileSection;
