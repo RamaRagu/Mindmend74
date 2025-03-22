@@ -10,7 +10,7 @@ export const Header: React.FC = () => {
       <View style={styles.statusBar}></View>
       <View style={styles.userInfo}>
         <View style={styles.userContainer}>
-          <TouchableOpacity onPress={() => router.push("/UserProfile/profile")}>
+          <TouchableOpacity onPress={() => router.push("/components/account/AccountSidebar")}>
             <UserAvatar src="https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/49b635ab58300e9cfc3137f545b875ef0653985ba8d5445e2348184732056ea0" />
           </TouchableOpacity>
           <Text style={styles.greeting}>Hello Thenusha !</Text>
