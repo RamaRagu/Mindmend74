@@ -2,8 +2,8 @@ import React from 'react';
 import { Tabs } from 'expo-router';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Fontisto from '@expo/vector-icons/Fontisto';
-import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 export default function TabLayout() {
   return (
@@ -27,11 +27,11 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="Progress"
+        name="Chatbot"
         options={{
-          tabBarLabel: 'Progress',
+          tabBarLabel: 'speech Therapy',
           tabBarIcon: ({ color, size }) => (
-            <Entypo name="gauge" size={24} color="#042558" />
+            <MaterialCommunityIcons name="qqchat" size={24} color="black" />
           ),
         }}
       />
