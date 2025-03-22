@@ -88,11 +88,12 @@ const TalkingTom = () => {
     fillLight.position.set(-5, 0, -5);
     scene.add(fillLight);
 
+   
     try {
       const loader = new GLTFLoader();
       const gltf = await new Promise<GLTF>((resolve, reject) => {
         loader.load(
-          require("@/assets/talking_tom_town_talking_angela.glb"),
+          require("../../../assets/talking_tom_town_talking_angela.glb"),
           (gltf: GLTF) => {
             resolve(gltf);
           },
