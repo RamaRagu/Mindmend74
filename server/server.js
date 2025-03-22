@@ -49,6 +49,7 @@ app.use("/api/parent", parentRoutes);
 app.use("/api/child", childRoutes);
 app.use("/api/doctor", doctorRoutes);
 app.use("/api/therapy-session", therapySessionRoutes);
+app.use("/api/speech", speechRoutes);
 
 // Route to get the prediction from the ML model
 app.post("/predict", async (req, res) => {
