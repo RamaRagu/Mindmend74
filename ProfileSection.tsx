@@ -41,7 +41,7 @@ const ProfileSection: FC<ProfileSectionProps> = ({
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Image
-              source={{ uri: "https://cdn.builder.io/api/v1/image/assets/TEMP/873a0cbd1acbb21191bcb437ba32d933ac38921b" }}
+              source={{ uri: "https://cdn.builder.io/api/v1/image/assets/TEMP/eb455c48e2cf6e2d2c5090ab15c59424a2046c0e" }}
               style={styles.largeAvatar}
               resizeMode="cover" // Ensure the image covers the entire area
             />
