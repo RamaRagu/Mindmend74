@@ -10,6 +10,22 @@ exports.createChild = async (req, res) => {
       where: { userId },
     });
 
+    if (!parent) {
+      return res.status(404).json({ error: "Parent not found" });
+    }
+
+    // Check if a child with the same name already exists for this parent
+    const existingChild = await prisma.child.findFirst({
+      where: {
+        parentId: parent.id,
+        name: name
+      }
+    });
+
+    if (existingChild) {
+      return res.status(409).json({ error: "A child with this name already exists for this parent" });
+    }
+
     const child = await prisma.child.create({
       data: {
         parentId: parent.id,
@@ -26,6 +42,7 @@ exports.createChild = async (req, res) => {
   }
 };
 
+
 // Get details of a child by ID
 exports.getChildById = async (req, res) => {
   const { id } = req.params;
@@ -33,10 +50,18 @@ exports.getChildById = async (req, res) => {
   try {
     const child = await prisma.child.findUnique({
       where: { id },
+      include: {
+        sessionHistory: true,
+      }
     });
 
     if (!child) {
       return res.status(404).json({ error: "Child not found" });
+    }
+
+    // Check authorization - ensure only authorized personnel can access
+    if (req.user && req.user.parent && child.parentId !== req.user.parent.id) {
+      return res.status(403).json({ error: "You are not authorized to access this child's information" });
     }
 
     res.status(200).json(child);
