@@ -40,8 +40,7 @@ const Index = () => {
           /> */}
           <ActionCard
             onPress={() => router.push('chatbot/chatg')} // Correct the navigation path
-            title="Chat With
-             me!"
+            title={"Chat\nWith\nme"}
             imageSource={chatImage}
             style={styles.chatCard}
             imageStyle={styles.chatImage}
@@ -104,7 +103,7 @@ const styles = StyleSheet.create({
   formCardTitle: {
     fontSize: 30,
     color: "#042558",
-    marginLeft: -10,
+    marginLeft: 0,
   },
   chatCard: {
     paddingHorizontal: 56,
@@ -118,7 +117,7 @@ const styles = StyleSheet.create({
   chatCardTitle: {
     fontSize: 30,
     color: "#042558",
-    marginLeft: -310,
+    marginLeft: -280,
   },
   activitySection: {
     marginTop: 15,

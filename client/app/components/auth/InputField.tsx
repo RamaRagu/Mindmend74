@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, TextInput, TouchableOpacity, Image, StyleSheet } from "react-native";
 import Feather from "react-native-vector-icons/Feather";
 
+
 interface InputFieldProps {
   icon: string;
   placeholder: string;

@@ -13,19 +13,19 @@ export const Header = () => {
       <View style={styles.iconsContainer}>
         <Image
           source={{
-            uri: "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/869020650292f3f1f3b851b8f012f660c94dadf0ffa1aa53052345ec5dfa0b00",
+            uri: "",
           }}
           style={styles.icon1}
         />
         <Image
           source={{
-            uri: "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/bdda6abdda828100bf61cada2d859255834c874c6c717e8580247ffee898c83b",
+            uri: "",
           }}
           style={styles.icon2}
         />
         <Image
           source={{
-            uri: "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/ff95fb0e65f345733bb1399dae0db0e4aba6d4d66c4980bb028da28f58c55dc3",
+            uri: "",
           }}
           style={styles.icon3}
         />
