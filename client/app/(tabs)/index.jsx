@@ -7,7 +7,7 @@ import { ActivityGrid } from "../components/home/ActivityGrid";
 
 // Import the local images
 import formImage from "../../assets/images/form.png";
-import chatImage from "../../assets/images/chatb.png"; // Import the new image
+import chatImage from "../../assets/images/chatb.png"; 
 
 const Index = () => {
   const router = useRouter(); // Initialize router

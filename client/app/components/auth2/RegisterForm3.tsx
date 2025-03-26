@@ -70,7 +70,7 @@ export const RegisterForm: React.FC = () => {
 
       <View style={styles.footer}>
         <Text style={styles.footerText}>Already you have an account? </Text>
-        <TouchableOpacity onPress={() => router.push('/login/signin')}>
+        <TouchableOpacity onPress={() => router.push('/(tabs)')}>
           <Text style={styles.signInText}>Sign In</Text>
         </TouchableOpacity>
       </View>
