@@ -1,10 +1,10 @@
 const { PrismaClient } = require("@prisma/client");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const prisma = new PrismaClient();
 
-// Register a new parent or doctor user
-exports.register = async (req, res) => {
+// Register a new parent 
+exports.createParent = async (req, res) => {
   const { email, password, name, contact, address, userType } = req.body;
 
   try {
@@ -23,13 +23,13 @@ exports.register = async (req, res) => {
             create: {},
           },
         }),
-        ...(userType === "DOCTOR" && {
-          doctor: {
-            create: {},
-          },
-        }),
-      },
-    });
+    //     ...(userType === "DOCTOR" && {
+    //       doctor: {
+    //         create: {},
+    //       },
+    //     }),
+    //   },
+    // });
 
     const token = jwt.sign(
       { id: user.id, userType: user.userType },

@@ -95,18 +95,22 @@ const ProfileNative = () => {
     // Basic validation
     if (!formData.fullname.trim()) {
       Alert.alert("Error", "Please enter your full name");
+      console.log("Error", "Please enter your full name");
       return false;
     }
     if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email)) {
       Alert.alert("Error", "Please enter a valid email address");
+      console.log("Error", "Please enter a valid email address")
       return false;
     }
     if (!formData.mobileNumber.trim()) {
       Alert.alert("Error", "Please enter your mobile number");
+      console.log("Error", "Please enter your mobile number")
       return false;
     }
     if (formData.age <= 0) {
       Alert.alert("Error", "Please enter a valid age");
+      console.log("Error", "Please enter a valid age")
       return false;
     }
     return true;
@@ -115,7 +119,48 @@ const ProfileNative = () => {
   const handleSubmit = () => {
     if (validateForm()) {
       console.log("Form data:", formData);
-      Alert.alert("Success", "Profile information saved successfully");
+      fetch("https://glorious-carnival-pj77qgpj7j752rwj-3000.app.github.dev/api/parent/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
+        .then((response) => {
+          if (!response.ok) {
+        throw new Error("Failed to save parent profile data");
+          }
+          return response.json();
+        })
+        .then((parentData) => {
+          console.log("Parent data saved:", parentData);
+          
+          // Now save child data with the parent's ID
+          return fetch("https://glorious-carnival-pj77qgpj7j752rwj-3000.app.github.dev/api/child/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          parentId: parentData.id 
+        }),
+          });
+        })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to save profile data");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          Alert.alert("Success", "Profile data saved successfully");
+          console.log("Response data:", data);
+        })
+        .catch((error) => {
+          Alert.alert("Error", error.message);
+          console.error("Error:", error);
+        });
     }
   };
 

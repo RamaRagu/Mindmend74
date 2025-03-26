@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const childController = require("../controllers/childController.js");
+const parentController = require("../controllers/parentController.js");
 
 // Child routes
-router.post("/", childController.createChild);
-router.get("/:id", childController.getChildById);
-router.put("/:id", childController.updateChildById);
-router.delete("/:id", childController.deleteChildById);
+router.post("/", parentController.createParent);
+router.get("/:id", parentController.getParentDetails);
+router.put("/:id", parentController.updateParent);
+router.delete("/:id", parentController.deleteParent);
 
 module.exports = router;
