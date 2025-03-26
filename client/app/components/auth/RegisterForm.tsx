@@ -1,15 +1,48 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, Image, StyleSheet, Alert } from "react-native";
 import { InputField } from "./InputField";
+import { useNavigation } from "@react-navigation/native";
 import { SocialButton } from "./SocialButton";
 import { useRouter } from 'expo-router';
+import { auth } from '../../../FirebaseConfig';
+import { createUserWithEmailAndPassword } from '../../../AuthServices';
 
 export const RegisterForm: React.FC = () => {
   const router = useRouter();
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [confirmPassword, setConfirmPassword] = React.useState('');
+  const navigation = useNavigation();
 
-  const handleSubmit = () => {
-    // Handle form submission
+  const handleSignup = async (email: string, password: string, confirmPassword: string) => {
+    console.log(email, password, confirmPassword);
+    if (password !== confirmPassword) {
+      Alert.alert("Error", "Passwords do not match.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`https://api.mindmend74.com/api/auth`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        const user = data.user;
+        // Handle successful user creation
+      } else {
+        throw new Error(data.message || 'Failed to create user');
+      }
+    } catch (error) {
+      Alert.alert("Signup Failed", (error as Error).message || "An unknown error occurred.");
+    }
   };
+  
 
   return (
     <View style={styles.container}>
@@ -32,26 +65,33 @@ export const RegisterForm: React.FC = () => {
           icon="https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/15622e48b465dbfb5a2d7f364aeb7f8ac34455f4216af26690cb589613e0b6e2"
           placeholder="Enter the email address"
           type="email"
+          value={email}
+          onChangeText={setEmail}
         />
         <InputField
           icon="https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/5dc575503113dbb7dabaca762e741ff786c988745ee10cca20d683cbb08b2c2a"
           placeholder="Enter the password"
           type="password"
           showPasswordToggle
+          value={password}
+          onChangeText={setPassword}
         />
         <InputField
           icon="https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/5dc575503113dbb7dabaca762e741ff786c988745ee10cca20d683cbb08b2c2a"
           placeholder="Re-enter the password"
           type="password"
           showPasswordToggle
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
         />
       </View>
 
       <TouchableOpacity
         style={styles.signupButton}
-        onPress={handleSubmit}
+        onPress={() => handleSignup(email, password, confirmPassword)}
         activeOpacity={0.8}
       >
+
         <Text style={styles.signupButtonText}>Sign up</Text>
       </TouchableOpacity>
 
@@ -158,3 +198,4 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 });
+

@@ -1,15 +1,28 @@
-import React from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
-import { InputField } from "./InputField";
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, Image, StyleSheet, Alert, ActivityIndicator, TextInput } from "react-native";
 import { SocialButton } from "./SocialButton";
 import { useRouter } from 'expo-router';
-import { RegisterForm } from "../auth2/RegisterForm3";
+import { auth } from '../../../FirebaseConfig';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 export const RegisterForm2: React.FC = () => {
   const router = useRouter();
 
-  const handleSubmit = () => {
-    // Handle form submission
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      router.push('/(tabs)');
+    } catch (error: any) {
+      Alert.alert("Signin Failed", error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -29,17 +42,23 @@ export const RegisterForm2: React.FC = () => {
       </View>
 
       <View style={styles.formContainer}>
-        <InputField
-          icon="https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/15622e48b465dbfb5a2d7f364aeb7f8ac34455f4216af26690cb589613e0b6e2"
+        <TextInput
+          style={styles.input}
           placeholder="Enter the email address"
-          type="email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
         />
-        <InputField
-          icon="https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/5dc575503113dbb7dabaca762e741ff786c988745ee10cca20d683cbb08b2c2a"
+        <TextInput
+          style={styles.input}
           placeholder="Enter the password"
-          type="password"
-          showPasswordToggle
+          secureTextEntry={!showPassword}
+          value={password}
+          onChangeText={setPassword}
         />
+        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+          <Text style={styles.showPasswordText}>{showPassword ? 'Hide' : 'Show'}</Text>
+        </TouchableOpacity>
         <TouchableOpacity onPress={() => router.push('../auth2/RegisterForm3')}>
           <Text style={styles.orText2}>Forgot password ?</Text>
         </TouchableOpacity>
@@ -47,10 +66,15 @@ export const RegisterForm2: React.FC = () => {
 
       <TouchableOpacity
         style={styles.signupButton}
-        onPress={() => router.push('/(tabs)')}
+        onPress={handleSubmit}
         activeOpacity={0.8}
+        disabled={loading}
       >
-        <Text style={styles.signupButtonText}>Sign in</Text>
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.signupButtonText}>Sign in</Text>
+        )}
       </TouchableOpacity>
 
       <Text style={styles.orText}>or continue with</Text>
@@ -162,4 +186,15 @@ const styles = StyleSheet.create({
     color: "rgba(5,31,72,1)",
     fontWeight: "700",
   },
+  input: {
+    borderWidth: 1,
+    borderColor: 'gray',
+    padding: 10,
+    marginBottom: 10,
+  },
+  showPasswordText: {
+    alignSelf: 'flex-end',
+    marginTop: 5,
+    color: 'blue',
+  }
 });
