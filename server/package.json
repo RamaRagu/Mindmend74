@@ -2,14 +2,16 @@
   "name": "mindmend_backend",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js",
-    "prisma:seed": "ts-node prisma/seed.ts"
-  },
-  "prisma": {
-    "seed": "ts-node prisma/seed.ts"
-  },
+"scripts": {
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "dev": "nodemon server.js",
+  "prisma:seed:users": "ts-node prisma/seed.ts",
+  "prisma:seed:doctors": "ts-node prisma/doctorSeed.ts",
+  "update:doctor:images": "ts-node prisma/updateDoctorImages.ts"
+},
+"prisma": {
+  "seed": "ts-node prisma/seed.ts && ts-node prisma/doctorSeed.ts"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
