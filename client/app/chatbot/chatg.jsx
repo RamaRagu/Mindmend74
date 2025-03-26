@@ -11,6 +11,8 @@ const Chatg = () => {
   const [isLoading, setIsLoading] = useState(false);
   const scrollViewRef = useRef(null);
 
+  const OPENAI_API_KEY = "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"; // Replace with your actual API key
+
   // Auto scroll to bottom when new messages arrive
   useEffect(() => {
     if (scrollViewRef.current) {
@@ -50,6 +52,7 @@ const Chatg = () => {
           headers: {
             "api-key": "2aoAYW6fvJUmEfFJnaZm4R1pTifkACcZ7o7XFqPhOugyp0JQ0QoOJQQJ99BCACfhMk5XJ3w3AAAAACOGAB0j",
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${OPENAI_API_KEY}` //Add the new openAI api key
           },
         }
       );
