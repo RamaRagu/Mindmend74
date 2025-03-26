@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { useRouter } from 'expo-router'; // Import useRouter hook
+import { useRouter } from 'expo-router'; 
 import { Header } from "../components/home/Header";
 import { ActionCard } from "../components/home/ActionCard";
 import { ActivityGrid } from "../components/home/ActivityGrid";
@@ -29,15 +29,6 @@ const Index = () => {
             imageStyle={styles.formImage}
             titleStyle={styles.formCardTitle}
           />
-          {/* <ActionCard
-            onPress={() => router.push('UserProfile/profile')} // Correct the navigation path
-            title="View Your 
-            Profile"
-            imageSource={formImage}
-            style={styles.formCard}
-            imageStyle={styles.formImage}
-            titleStyle={styles.formCardTitle}
-          /> */}
           <ActionCard
             onPress={() => router.push('chatbot/chatg')} // Correct the navigation path
             title={"Chat\nWith\nme"}

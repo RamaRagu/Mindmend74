@@ -1,10 +1,37 @@
-import React from "react";
-import { View, Text, Image, ScrollView, StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, Image, ScrollView, StyleSheet, ActivityIndicator } from "react-native";
 import { SearchBar } from "../components/doctor/SearchBar";
 import { DoctorCard } from "../components/doctor/DoctorCard";
 import { Header } from "../components/layout/Header";
 
 const Doctor = () => {
+  const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("https://glorious-carnival-pj77qgpj7j752rwj-3000.app.github.dev/api/doctors");
+        
+        if (!response.ok) {
+          throw new Error("Failed to fetch doctors");
+        }
+        
+        const data = await response.json();
+        setDoctors(data);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching doctors:", err);
+        setError("Failed to load doctors");
+        setLoading(false);
+      }
+    };
+
+    fetchDoctors();
+  }, []);
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
@@ -29,40 +56,24 @@ const Doctor = () => {
           </Text>
 
           <View style={styles.doctorsList}>
-            <DoctorCard
-              name="Dr. R.David"
-              image="https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/8d3024ca7b76ad6910deaa9a03eddb1cd5b8a4cb705b93bba93908091729547f"
-              rating={4.5}
-              time="10:30 AM-3:30"
-              role="Senior Surgeon"
-              fee="$12"
-            />
-
-            <DoctorCard
-              name="Dr. Alina Fatima"
-              image="https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/df337b2abae983c2b323db78d5f8a734a1ac676a68a6b9c2b1a9102fe5fa8b63"
-              rating={4.5}
-              time="10:30 AM-3:30"
-              role="Senior Surgeon"
-              fee="$12"
-            />
-
-            <DoctorCard
-              name="Dr. Alina Fatima"
-              image="https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/df337b2abae983c2b323db78d5f8a734a1ac676a68a6b9c2b1a9102fe5fa8b63"
-              rating={4.5}
-              time="10:30 AM-3:30"
-              role="Senior Surgeon"
-              fee="$12"
-            />
-
-            <DoctorCard
-              name="Dr. Alina Fatima"
-              image="https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/df337b2abae983c2b323db78d5f8a734a1ac676a68a6b9c2b1a9102fe5fa8b63"
-              rating={4.5}
-              time="10:30 AM-3:30"
-              expanded={true}
-            />
+            {loading ? (
+              <ActivityIndicator size="large" color="#042558" />
+            ) : error ? (
+              <Text style={styles.errorText}>{error}</Text>
+            ) : (
+              doctors.map((doctor, index) => (
+                <DoctorCard
+                  key={doctor.doctorId || index}
+                  name={doctor.name}
+                  image={doctor.imageUrl || "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/df337b2abae983c2b323db78d5f8a734a1ac676a68a6b9c2b1a9102fe5fa8b63"}
+                  rating={doctor.rating}
+                  time={doctor.availableTime}
+                  role={doctor.role}
+                  fee={doctor.fee}
+                  expanded={index === doctors.length - 1}
+                />
+              ))
+            )}
           </View>
 
           <View style={styles.dotsContainer}>
@@ -133,6 +144,11 @@ const styles = StyleSheet.create({
     height: 11,
     aspectRatio: 0.82,
   },
+  errorText: {
+    color: "red",
+    textAlign: "center",
+    marginTop: 20,
+  }
 });
 
 export default Doctor;
