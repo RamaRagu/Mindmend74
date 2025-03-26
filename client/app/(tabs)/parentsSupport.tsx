@@ -1,9 +1,11 @@
-import * * as React from "react";
+import * as React from "react";
 import { View, ScrollView, StyleSheet, SafeAreaView, Dimensions } from "react-native";
 import { PageHeader } from "../components/ui/page-header.native";
 import { TopicCard } from "../components/caregiver/topic-card.native";
 import { useRouter } from "expo-router";
 
+// Import images for each topic
+// You should place these images in your assets folder
 const SUPPORT_TOPICS = [
   { 
     id: 1, 
@@ -68,19 +70,22 @@ const SUPPORT_TOPICS = [
 ];
 
 interface IndexProps {
-  navigation?: any;
+  navigation?: any; // For React Navigation
 }
 
 const Index: React.FC<IndexProps> = () => {
-  const router = useRouter();
+  const router = useRouter(); // Add router for navigation
 
   const handleBack = () => {
+    // Navigate back or to a specific route
     router.back();
   };
 
   const handleTopicClick = (topicId: number) => {
+    // Find the topic by ID
     const topic = SUPPORT_TOPICS.find(t => t.id === topicId);
     if (topic && topic.route) {
+      // Navigate to the corresponding route
       router.push(topic.route as any);
       console.log(`Navigating to: ${topic.route}`);
     }
@@ -120,14 +125,14 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     width: '100%',
-    maxWidth: isLargeDevice ? 600 : 440,
+    maxWidth: isLargeDevice ? 600 : 440, // Wider for tablets
     alignSelf: 'center',
   },
   scrollContainer: {
     flexGrow: 1,
-    paddingBottom: height * 0.04,
-    paddingHorizontal: width * 0.05,
-    gap: height * 0.03,
+    paddingBottom: height * 0.04, // Responsive padding
+    paddingHorizontal: width * 0.05, // Responsive padding
+    gap: height * 0.03, // Responsive gap
   },
 });
 
