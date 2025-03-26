@@ -3,11 +3,13 @@ import { View, TextInput, TouchableOpacity, Image, StyleSheet } from "react-nati
 import Feather from "react-native-vector-icons/Feather";
 
 
-interface InputFieldProps {
+export interface InputFieldProps {
   icon: string;
   placeholder: string;
-  type?: string;
+  type: string;
+  value: string;
   showPasswordToggle?: boolean;
+  onChangeText: (text: string) => void;
 }
 
 export const InputField: React.FC<InputFieldProps> = ({
