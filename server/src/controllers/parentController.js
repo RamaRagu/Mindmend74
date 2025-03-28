@@ -23,13 +23,13 @@ exports.createParent = async (req, res) => {
             create: {},
           },
         }),
-    //     ...(userType === "DOCTOR" && {
-    //       doctor: {
-    //         create: {},
-    //       },
-    //     }),
-    //   },
-    // });
+        ...(userType === "DOCTOR" && {
+          doctor: {
+            create: {},
+          },
+        }),
+      },
+    });
 
     const token = jwt.sign(
       { id: user.id, userType: user.userType },

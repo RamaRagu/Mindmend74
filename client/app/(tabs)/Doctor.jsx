@@ -13,7 +13,7 @@ const Doctor = () => {
     const fetchDoctors = async () => {
       try {
         setLoading(true);
-        const response = await fetch("https://glorious-carnival-pj77qgpj7j752rwj-3000.app.github.dev/api/doctors");
+        const response = await fetch("https://glorious-carnival-pj77qgpj7j752rwj-3000.app.github.dev/api/doctor");
         
         if (!response.ok) {
           throw new Error("Failed to fetch doctors");
