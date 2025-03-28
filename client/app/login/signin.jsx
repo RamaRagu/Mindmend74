@@ -1,36 +1,45 @@
-import { SafeAreaView, StyleSheet, Alert } from "react-native";
-import { RegisterForm2 } from "../components/auth2/RegisterForm2";
-import { FIREBASE_AUTH } from "../../FirebaseConfig";
-import { useState } from "react";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import React, { useState } from "react";
+import {
+  SafeAreaView,
+  StyleSheet,
+  Alert,
+  View,
+  ActivityIndicator,
+} from "react-native";
+import { RegisterForm } from "../components/auth/RegisterForm";
+import { useNavigation } from "@react-navigation/native";
 
-const signin = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+const Signup = () => {
+  const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
-  const [isRegistering, setIsRegistering] = useState(false); // Track registration/login state
-  const auth = FIREBASE_AUTH;
 
-  const handleAuthentication = async () => {
+  const handleSignup = async (email, password, confirmPassword) => {
     setLoading(true);
-    setError(""); 
+
     try {
-      if (isRegistering) {
-        // Registration logic
-        const response = await createUserWithEmailAndPassword(auth, email, password);
-        console.log("Registered with:", response.user.email);
-        Alert.alert("Registration Successful", "You have been registered successfully!");
+      const {
+        auth,
+        createUserWithEmailAndPassword,
+      } = require("../../FirebaseConfig");
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+
+      if (user) {
+        const token = await user.getIdToken();
+        const AsyncStorage =
+          require("@react-native-async-storage/async-storage").default;
+        await AsyncStorage.setItem("userToken", token);
+        Alert.alert("Success", "Account created successfully!");
+        navigation.navigate("DetailsCollection");
       } else {
-        // Login logic
-        const response = await signInWithEmailAndPassword(auth, email, password);
-        console.log("Logged in with:", response.user.email);
-        Alert.alert("Login Successful", "You are logged in!");
+        Alert.alert("Error", "User creation failed.");
       }
-    } catch (err) {
-      console.error("Authentication error:", err);
-      setError(err.message);
-      Alert.alert("Authentication Failed", err.message);
+    } catch (error) {
+      Alert.alert("Signup Failed", error.message);
     } finally {
       setLoading(false);
     }
@@ -38,16 +47,18 @@ const signin = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <RegisterForm2
-        email={email}
-        password={password}
-        setEmail={setEmail}
-        setPassword={setPassword}
-        loading={loading}
-        onPress={handleAuthentication}
-        isRegistering={isRegistering}
-        setIsRegistering={setIsRegistering}
-      />
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      ) : (
+        <RegisterForm
+          onSignup={handleSignup}
+          loading={loading}
+          setLoading={setLoading}
+          navigation={navigation}
+        />
+      )}
     </SafeAreaView>
   );
 };
@@ -57,7 +68,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f3f4f6",
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
 
-export default signin;
-
+export default Signup;
