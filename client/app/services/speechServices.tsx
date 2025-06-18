@@ -1,7 +1,7 @@
 // frontend/src/services/speechService.tsx
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/speech";
+const API_URL = "http://localhost:3000/api/speech";
 
 interface SpeechResponse {
   transcript: string;

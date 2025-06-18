@@ -1,391 +1,239 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, Image, ScrollView, StyleSheet } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  StyleSheet,
+  ActivityIndicator,
+  Pressable,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { SearchBar } from "../components/doctor/SearchBar";
-import { DoctorCard } from "../components/doctor/DoctorCard";
 import { Header } from "../components/layout/Header";
 
 const Doctor = () => {
-  const [searchInput, setSearchInput] = useState("");
+  const [doctors, setDoctors] = useState([]);
   const [filteredDoctors, setFilteredDoctors] = useState([]);
-
-  const doctors = [
-    {
-      name: "Dr. R.David",
-      image:
-        "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/8d3024ca7b76ad6910deaa9a03eddb1cd5b8a4cb705b93bba93908091729547f",
-      rating: 4.5,
-      time: "10:30 AM-3:30",
-      role: "Senior Surgeon",
-      fee: "$12",
-    },
-    {
-      name: "Dr. Alina Fatima",
-      image:
-        "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/df337b2abae983c2b323db78d5f8a734a1ac676a68a6b9c2b1a9102fe5fa8b63",
-      rating: 4.5,
-      time: "10:30 AM-3:30",
-      role: "Senior Surgeon",
-      fee: "$12",
-    },
-    {
-      name: "Dr. John Doe",
-      image:
-        "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/df337b2abae983c2b323db78d5f8a734a1ac676a68a6b9c2b1a9102fe5fa8b63",
-      rating: 4.5,
-      time: "10:30 AM-3:30",
-      role: "Senior Surgeon",
-      fee: "$12",
-    },
-    {
-      name: "Dr. Jane Smith",
-      image:
-        "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/8d3024ca7b76ad6910deaa9a03eddb1cd5b8a4cb705b93bba93908091729547f",
-      rating: 4.5,
-      time: "10:30 AM-3:30",
-      role: "Senior Surgeon",
-      fee: "$12",
-    },
-    {
-      name: "Dr. Emily Johnson",
-      image:
-        "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/8d3024ca7b76ad6910deaa9a03eddb1cd5b8a4cb705b93bba93908091729547f",
-      rating: 4.5,
-      time: "10:30 AM-3:30",
-      role: "Senior Surgeon",
-      fee: "$12",
-    },
-    {
-      name: "Dr. Michael Brown",
-      image:
-        "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/8d3024ca7b76ad6910deaa9a03eddb1cd5b8a4cb705b93bba93908091729547f",
-      rating: 4.5,
-      time: "10:30 AM-3:30",
-      role: "Senior Surgeon",
-      fee: "$12",
-    },
-    {
-      name: "Dr. Sarah Davis",
-      image:
-        "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/8d3024ca7b76ad6910deaa9a03eddb1cd5b8a4cb705b93bba93908091729547f",
-      rating: 4.5,
-      time: "10:30 AM-3:30",
-      role: "Senior Surgeon",
-      fee: "$12",
-    },
-    {
-      name: "Dr. William Wilson",
-      image:
-        "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/8d3024ca7b76ad6910deaa9a03eddb1cd5b8a4cb705b93bba93908091729547f",
-      rating: 4.5,
-      time: "10:30 AM-3:30",
-      role: "Senior Surgeon",
-      fee: "$12",
-    },
-    {
-      name: "Dr. Olivia Martinez",
-      image:
-        "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/8d3024ca7b76ad6910deaa9a03eddb1cd5b8a4cb705b93bba93908091729547f",
-      rating: 4.5,
-      time: "10:30 AM-3:30",
-      role: "Senior Surgeon",
-      fee: "$12",
-    },
-    {
-      name: "Dr. James Anderson",
-      image:
-        "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/8d3024ca7b76ad6910deaa9a03eddb1cd5b8a4cb705b93bba93908091729547f",
-      rating: 4.5,
-      time: "10:30 AM-3:30",
-      role: "Senior Surgeon",
-      fee: "$12",
-    },
-  ];
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigation = useNavigation(); // Initialize navigation
 
   useEffect(() => {
-    if (searchInput === "") {
+    const fetchDoctors = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("http://localhost:3000/api/doctor");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch doctors");
+        }
+
+        const data = await response.json();
+        setDoctors(data);
+        setFilteredDoctors(data);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching doctors:", err);
+        setError("Failed to load doctors");
+        setLoading(false);
+      }
+    };
+
+    fetchDoctors();
+  }, []);
+
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
       setFilteredDoctors(doctors);
     } else {
-      setFilteredDoctors(
-        doctors.filter((doctor) =>
-          doctor.name.toLowerCase().includes(searchInput.toLowerCase())
-        )
+      const filtered = doctors.filter((doctor) =>
+        doctor.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
+      setFilteredDoctors(filtered);
     }
-  }, [searchInput]);
+  }, [searchQuery, doctors]);
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+  };
+
+  const handleBookAppointment = (doctor) => {
+    navigation.navigate("../DoctorDetails", { doctor }); // Navigate to DoctorDetails with doctor data
+  };
 
   return (
-    <View style={styles.container}>
-      <Header />
+    <ScrollView style={styles.container}>
+      <Header title="Doctors" />
+      <View style={styles.hero}>
+        <Text style={styles.heroTitle}>Find Your Perfect Doctor</Text>
+        <Text style={styles.heroSubtitle}>
+          Expert care for your child's needs
+        </Text>
+      </View>
       <View style={styles.searchSection}>
         <SearchBar
-          value={searchInput}
-          onChangeText={(text) => setSearchInput(text)}
+          onChangeText={handleSearch}
+          value={searchQuery}
+          placeholder="Search doctors by name..."
         />
       </View>
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.content}>
-          <View style={styles.mainContent}>
-            <Text style={styles.sectionTitle}>Services</Text>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={styles.boxContainer}
-            >
-              <View style={styles.box}></View>
-              <View style={styles.box}></View>
-              <View style={styles.box}></View>
-              <View style={styles.box}></View>
-            </ScrollView>
-            <Text style={[styles.sectionTitle, styles.doctorsTitle]}>
-              Top Doctors
-            </Text>
-            <View style={styles.doctorsList}>
-              {filteredDoctors.length > 0 ? (
-                filteredDoctors.map((doctor, index) => (
-                  <DoctorCard
-                    key={index}
-                    name={doctor.name}
-                    image={doctor.image}
-                    rating={doctor.rating}
-                    time={doctor.time}
-                    role={doctor.role}
-                    fee={doctor.fee}
-                    expanded={doctor.expanded}
+      <View style={styles.mainContent}>
+        {loading ? (
+          <ActivityIndicator size="large" color="#042558" />
+        ) : error ? (
+          <Text style={styles.errorText}>{error}</Text>
+        ) : filteredDoctors.length === 0 ? (
+          <Text style={styles.notFoundText}>
+            No doctors found matching "{searchQuery}"
+          </Text>
+        ) : (
+          <View style={styles.doctorsList}>
+            {filteredDoctors.map((doctor, index) => (
+              <Pressable
+                key={doctor.doctorId || index}
+                style={styles.doctorCard}
+              >
+                <View style={styles.cardContent}>
+                  <Image
+                    source={{
+                      uri: doctor.imageUrl || "https://via.placeholder.com/150",
+                    }}
+                    style={styles.doctorImage}
                   />
-                ))
-              ) : (
-                <Text>No doctors found</Text>
-              )}
-            </View>
-            <View style={styles.dotsContainer}>
-              <Image
-                source={{
-                  uri: "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/7ed50aecc25d8b11f755355242db516820c31225360e181b60ad8906bfb6987c",
-                }}
-                style={styles.dots}
-              />
-            </View>
+                  <View style={styles.doctorInfo}>
+                    <Text style={styles.doctorName}>{doctor.name}</Text>
+                    <Text style={styles.doctorSpecialization}>
+                      {doctor.specialization}
+                    </Text>
+                    <Text style={styles.doctorLicense}>
+                      License: {doctor.licenseNumber}
+                    </Text>
+                    <Pressable
+                      style={styles.bookButton}
+                      onPress={() => handleBookAppointment(doctor)}
+                    >
+                      <Text style={styles.bookButtonText}>
+                        Book Appointment
+                      </Text>
+                    </Pressable>
+                  </View>
+                </View>
+              </Pressable>
+            ))}
           </View>
-        </View>
-      </ScrollView>
-    </View>
+        )}
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "white",
-  },
-  scrollView: {
+    backgroundColor: "#f5f7ff",
     flex: 1,
   },
-  content: {
-    maxWidth: 480,
+  hero: {
+    backgroundColor: "#042558",
+    padding: 30,
     alignItems: "center",
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+    marginBottom: 20,
+  },
+  heroTitle: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: "white",
+    marginBottom: 10,
+  },
+  heroSubtitle: {
+    fontSize: 16,
+    color: "#E2EAFF",
+    opacity: 0.8,
   },
   searchSection: {
     width: "100%",
-    paddingTop: 20,
-    paddingBottom: 10,
     paddingHorizontal: 23,
+    marginTop: -20,
   },
   mainContent: {
     width: "100%",
     marginTop: 17,
     paddingHorizontal: 20,
   },
-  sectionTitle: {
-    color: "#042558",
-    fontSize: 24,
-    fontWeight: "600",
-    marginLeft: 21,
-  },
-  boxContainer: {
-    flexDirection: "row",
+  doctorsList: {
+    gap: 20,
     marginTop: 20,
-    marginHorizontal: 0,
   },
-  box: {
+  doctorCard: {
+    backgroundColor: "#E2EAFF",
+    borderRadius: 16,
+    padding: 16,
+    shadowColor: "#042558",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  cardContent: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  doctorImage: {
     width: 100,
     height: 100,
+    borderRadius: 50,
+    borderWidth: 3,
+    borderColor: "white",
+  },
+  doctorInfo: {
+    marginLeft: 20,
+    flex: 1,
+  },
+  doctorName: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#042558",
+    marginBottom: 4,
+  },
+  doctorSpecialization: {
+    fontSize: 16,
+    color: "#4A6DB5",
+    marginBottom: 4,
+  },
+  doctorLicense: {
+    fontSize: 14,
+    color: "#7791C2",
+    marginBottom: 12,
+  },
+  bookButton: {
     backgroundColor: "#042558",
-    borderRadius: 10,
-    marginRight: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    alignSelf: "flex-start",
+    marginTop: 5,
   },
-  doctorsTitle: {
-    color: "#1E1F2E",
-    marginLeft: 15,
+  bookButtonText: {
+    color: "white",
+    fontWeight: "600",
+    fontSize: 14,
+  },
+  errorText: {
+    color: "red",
+    textAlign: "center",
     marginTop: 20,
+    fontSize: 16,
   },
-  doctorsList: {
-    gap: 16,
-    marginTop: 44,
-  },
-  dotsContainer: {
-    alignItems: "center",
-    marginTop: 10,
-  },
-  dots: {
-    width: 9,
-    height: 11,
-    aspectRatio: 0.82,
+  notFoundText: {
+    color: "#042558",
+    textAlign: "center",
+    marginTop: 40,
+    fontSize: 16,
+    fontWeight: "500",
   },
 });
 
 export default Doctor;
-
-// import React, { useState, useEffect } from "react";
-// import { View, Text, Image, ScrollView, StyleSheet, ActivityIndicator } from "react-native";
-// import { SearchBar } from "../components/doctor/SearchBar";
-// import { DoctorCard } from "../components/doctor/DoctorCard";
-// import { Header } from "../components/layout/Header";
-
-// const Doctor = () => {
-//   const [doctors, setDoctors] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-
-//   useEffect(() => {
-//     const fetchDoctors = async () => {
-//       try {
-//         setLoading(true);
-//         const response = await fetch("https://glorious-carnival-pj77qgpj7j752rwj-3000.app.github.dev/api/doctors");
-
-//         if (!response.ok) {
-//           throw new Error("Failed to fetch doctors");
-//         }
-
-//         const data = await response.json();
-//         setDoctors(data);
-//         setLoading(false);
-//       } catch (err) {
-//         console.error("Error fetching doctors:", err);
-//         setError("Failed to load doctors");
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchDoctors();
-//   }, []);
-
-//   return (
-//     <ScrollView style={styles.container}>
-//       <View style={styles.content}>
-//         <Header />
-
-//         <View style={styles.searchSection}>
-//           <SearchBar />
-//         </View>
-
-//         <View style={styles.mainContent}>
-//           <Text style={styles.sectionTitle}>Services</Text>
-
-//           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.boxContainer}>
-//             <View style={styles.box}></View>
-//             <View style={styles.box}></View>
-//             <View style={styles.box}></View>
-//             <View style={styles.box}></View>
-//           </ScrollView>
-
-//           <Text style={[styles.sectionTitle, styles.doctorsTitle]}>
-//             Top Doctors
-//           </Text>
-
-//           <View style={styles.doctorsList}>
-//             {loading ? (
-//               <ActivityIndicator size="large" color="#042558" />
-//             ) : error ? (
-//               <Text style={styles.errorText}>{error}</Text>
-//             ) : (
-//               doctors.map((doctor, index) => (
-//                 <DoctorCard
-//                   key={doctor.doctorId || index}
-//                   name={doctor.name}
-//                   image={doctor.imageUrl || "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/df337b2abae983c2b323db78d5f8a734a1ac676a68a6b9c2b1a9102fe5fa8b63"}
-//                   rating={doctor.rating}
-//                   time={doctor.availableTime}
-//                   role={doctor.role}
-//                   fee={doctor.fee}
-//                   expanded={index === doctors.length - 1}
-//                 />
-//               ))
-//             )}
-//           </View>
-
-//           <View style={styles.dotsContainer}>
-//             <Image
-//               source={{
-//                 uri: "https://cdn.builder.io/api/v1/image/assets/0fafb3744be64bba95337069a4751cd9/7ed50aecc25d8b11f755355242db516820c31225360e181b60ad8906bfb6987c",
-//               }}
-//               style={styles.dots}
-//             />
-//           </View>
-//         </View>
-//       </View>
-//     </ScrollView>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     backgroundColor: "white",
-//   },
-//   content: {
-//     maxWidth: 480,
-//     alignItems: "center",
-//   },
-//   searchSection: {
-//     width: "100%",
-//     paddingTop: 16,
-//     paddingHorizontal: 23,
-//   },
-//   mainContent: {
-//     width: "100%",
-//     marginTop: 17,
-//     paddingHorizontal: 20,
-//   },
-//   sectionTitle: {
-//     color: "#042558",
-//     fontSize: 24,
-//     fontWeight: "600",
-//     marginLeft: 21,
-//   },
-//   boxContainer: {
-//     flexDirection: "row",
-//     marginTop: 20,
-//     marginHorizontal: 0,
-//   },
-//   box: {
-//     width: 100,
-//     height: 100,
-//     backgroundColor: "#042558",
-//     borderRadius: 10,
-//     marginRight: 10,
-//   },
-//   doctorsTitle: {
-//     color: "#1E1F2E",
-//     marginLeft: 15,
-//     marginTop: 20,
-//   },
-//   doctorsList: {
-//     gap: 16,
-//     marginTop: 44,
-//   },
-//   dotsContainer: {
-//     alignItems: "center",
-//     marginTop: 10,
-//   },
-//   dots: {
-//     width: 9,
-//     height: 11,
-//     aspectRatio: 0.82,
-//   },
-//   errorText: {
-//     color: "red",
-//     textAlign: "center",
-//     marginTop: 20,
-//   }
-// });
-
-// export default Doctor;
